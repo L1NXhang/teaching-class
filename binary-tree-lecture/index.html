@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>二叉树及其遍历 — 信息技术 选择性必修1 §3.5</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/animations/animations.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="tpl-course-module" data-themes="engineering-whiteprint,academic-paper,solarized-light,corporate-clean" data-theme-base="assets/themes/">
+<div class="deck">
+
+<!-- ════════════════════════════════════════════
+     SLIDE 1 — COVER (full width, textbook image)
+     ════════════════════════════════════════════ -->
+<section class="slide full" data-title="封面">
+  <div class="cover-book"><img src="textbook-cover.png" alt="人教版 信息技术 选择性必修1" onerror="this.parentElement.style.display='none'"></div>
+  <p class="kicker">信息技术 · 选择性必修1 &nbsp; §3.5 二叉树（第95—103页）</p>
+  <h1 class="h1 mt-s">二叉树及其遍历</h1>
+  <p class="lede mt-m" style="max-width:60ch">
+    从京剧行当的分支结构，到计算机科学中组织数据的最优方式——<br>
+    本节学习二叉树的<strong>概念、性质</strong>与<strong>三种经典遍历算法</strong>。
+  </p>
+  <div class="obj-row">
+    <div class="obj-chip">🎯 理解二叉树的概念与特点</div>
+    <div class="obj-chip">🔍 掌握三种遍历算法</div>
+    <div class="obj-chip">💡 感受二叉树组织数据的高效性</div>
+  </div>
+  <div class="deck-footer"><span>人教版《信息技术 选择性必修1》</span><span class="slide-number" data-current="1" data-total="16"></span></div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 2 — LEARNING OBJECTIVES (with sidebar)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="学习目标">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="current">了解树形结构与二叉树概念</li>
+      <li>理解二叉树的特点与性质</li>
+      <li>区分满二叉树与完全二叉树</li>
+      <li>掌握先根序遍历算法</li>
+      <li>掌握中根序遍历算法</li>
+      <li>掌握后根序遍历算法</li>
+      <li>能应用遍历解决实际问题</li>
+    </ul>
+    <h5>本节重点</h5>
+    <p style="font-size:12px;color:var(--text-3);line-height:1.6">
+      二叉树的<strong style="color:var(--accent)">递归定义</strong>是理解一切操作的基础；<br>
+      <strong style="color:var(--accent-2)">三种遍历</strong>是本节核心技能，也是考试重点。
+    </p>
+  </aside>
+  <div class="main">
+    <p class="kicker">学习目标</p>
+    <h2 class="h2 mt-s">学完本节，你将能够……</h2>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px">
+      <div class="concept-box"><h4>① 解释树形结构与二叉树的定义</h4><p style="font-size:14px;color:var(--text-2)">用自己的语言描述什么是二叉树，能举例说明生活中哪些数据可以用树形结构组织。</p></div>
+      <div class="concept-box"><h4>② 手动执行三种遍历并写出结果序列</h4><p style="font-size:14px;color:var(--text-2)">给定任意一棵二叉树，能用先根序、中根序、后根序三种方式完整遍历并记录序列。</p></div>
+      <div class="concept-box"><h4>③ 理解遍历与表达式的关系</h4><p style="font-size:14px;color:var(--text-2)">能将算术表达式转换为二叉树，并通过不同遍历获得前缀、中缀、后缀表达式。</p></div>
+      <div class="concept-box"><h4>④ 运用二叉树思想建模实际问题</h4><p style="font-size:14px;color:var(--text-2)">如动物园馆舍游览路线的规划——将现实问题抽象为二叉树模型并求解。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 3 — FROM LINEAR TO TREE (P95-96)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="从线性到非线性">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="current">理解二叉树的特点与性质</li>
+      <li>区分满二叉树与完全二叉树</li>
+      <li>掌握三种遍历算法</li>
+      <li>能应用遍历解决实际问题</li>
+    </ul>
+    <h5>教材参考</h5>
+    <p style="font-size:12px;color:var(--text-3)">P.95—96<br>图3.5.1 京剧行当<br>图3.5.2 数的分类</p>
+  </aside>
+  <div class="main">
+    <p class="kicker">3.5 二叉树 · 引入</p>
+    <h2 class="h2 mt-s">从"行当分支"到树形结构</h2>
+    <p class="lede mt-m">
+      <strong style="color:var(--accent)">线性结构</strong>（线性表、栈、队列、字符串）只能表达元素之间<strong>一对一</strong>的关系。<br>
+      但生活中大量数据关系是<strong style="color:var(--accent-2)">一对多</strong>的层次结构——族谱、组织架构、文件目录、数的分类……
+    </p>
+    <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px">
+      <div class="concept-box">
+        <h4>🎭 体验探索：京剧行当</h4>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.8">
+          生 → 老生、小生、武生<br>
+          旦 → 青衣、花旦、老旦、武旦<br>
+          净 → 正净、副净、武净<br>
+          丑 → 文丑、武丑<br>
+          <span style="color:var(--accent)">思考：能用线性结构表示行当间的关系吗？</span>
+        </p>
+      </div>
+      <div class="concept-box">
+        <h4>📐 思考活动：数的分类</h4>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.8">
+          数 → 实数 / 虚数<br>
+          实数 → 有理数 / 无理数<br>
+          有理数 → 整数 / 分数<br>
+          <span style="color:var(--accent-2)">这种分支结构有什么特点？</span>
+        </p>
+      </div>
+    </div>
+    <div class="callout">
+      <b>核心认识：</b>树形结构是描述<strong>层次关系</strong>和<strong>分支结构</strong>的数学模型。它的出现，让数据结构从"一对一"的线性世界进入了"一对多"的非线性世界。
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 4 — TREE BASIC TERMS (P96-97)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="树形结构基本术语">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="current">理解二叉树的特点与性质</li>
+      <li>区分满二叉树与完全二叉树</li>
+      <li>掌握三种遍历算法</li>
+      <li>能应用遍历解决实际问题</li>
+    </ul>
+    <h5>关键术语</h5>
+    <p style="font-size:12px;color:var(--text-3);line-height:1.8">
+      节点 · 度 · 树的度<br>
+      根节点 · 叶节点<br>
+      内部节点 · 分支节点<br>
+      双亲 · 孩子 · 兄弟<br>
+      层次 · 深度 · 高度
+    </p>
+  </aside>
+  <div class="main">
+    <p class="kicker">3.5.1 二叉树的概念</p>
+    <h2 class="h2 mt-s">树形结构的基本术语</h2>
+    <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px">
+      <div class="concept-box">
+        <h4>🔵 节点 (Node) 与 度 (Degree)</h4>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.7">
+          树的每个数据元素称为<strong>节点</strong>。<br>
+          节点拥有的<strong>子树个数</strong>称为该节点的<strong>度</strong>。<br>
+          树中所有节点的度的<strong>最大值</strong>称为<strong>树的度</strong>。
+        </p>
+        <p style="font-size:12px;color:var(--accent);margin-top:8px">
+          例：若一棵树中，节点A有2棵子树，节点B有3棵子树，其他节点都≤2，则树的度为3。
+        </p>
+      </div>
+      <div class="concept-box">
+        <h4>🎯 根节点、叶节点与内部节点</h4>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.7">
+          <strong style="color:var(--accent)">根节点</strong>：树中最顶层、唯一没有双亲的节点。<br>
+          <strong style="color:var(--accent-3)">叶节点</strong>：度为0的节点，也称终端节点。<br>
+          <strong style="color:var(--accent-2)">内部节点</strong>：除根以外的分支节点。
+        </p>
+      </div>
+      <div class="concept-box">
+        <h4>👨‍👩‍👦 双亲、孩子与兄弟</h4>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.7">
+          某节点的子树的根称为该节点的<strong>孩子</strong>；<br>
+          该节点称为其孩子的<strong>双亲</strong>；<br>
+          同一双亲的孩子之间互称<strong>兄弟</strong>。
+        </p>
+      </div>
+      <div class="concept-box">
+        <h4>📏 层次、深度与高度</h4>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.7">
+          根为<strong>第1层</strong>，孩子逐层+1。<br>
+          若某节点在第L层，其孩子就在第L+1层。<br>
+          <strong>深度/高度</strong>：树中节点的<strong>最大层次数</strong>。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 5 — BINARY TREE DEFINITION (P97-98)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="二叉树的定义">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="current">理解二叉树的特点与性质</li>
+      <li>区分满二叉树与完全二叉树</li>
+      <li>掌握三种遍历算法</li>
+      <li>能应用遍历解决实际问题</li>
+    </ul>
+    <h5>核心公式</h5>
+    <p style="font-size:12px;color:var(--text-3);line-height:1.8">
+      二叉树 = 度 ≤ 2 的有序树<br>
+      n=0 → 空树<br>
+      n>0 → 根 + 左子树 + 右子树
+    </p>
+  </aside>
+  <div class="main">
+    <p class="kicker">3.5.1 二叉树的概念</p>
+    <h2 class="h2 mt-s">二叉树的定义</h2>
+    <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+      <div class="concept-box">
+        <h4>📖 递归定义</h4>
+        <p style="font-size:14px;color:var(--text-2);line-height:2">
+          二叉树是 <strong>n (n≥0)</strong> 个节点的有限集：<br>
+          ① n=0 时，为<strong style="color:var(--accent)">空树</strong><br>
+          ② n>0 时，由一个<strong style="color:var(--accent)">根节点</strong>及两棵互不相交的、分别称为<strong style="color:var(--accent)">左子树</strong>和<strong style="color:var(--accent-2)">右子树</strong>的二叉树构成
+        </p>
+      </div>
+      <div class="concept-box">
+        <h4>⚡ 两个核心特点</h4>
+        <p style="font-size:14px;color:var(--text-2);line-height:2">
+          <strong>特点一：</strong>每个节点<strong style="color:var(--accent)">最多两棵子树</strong>（度 ≤ 2）。没有子树或只有一棵子树都是允许的。<br>
+          <strong>特点二：</strong>子树有<strong style="color:var(--accent-2)">左右之分</strong>，次序不可颠倒。即使只有一棵子树，也必须明确是左子树还是右子树。
+        </p>
+      </div>
+    </div>
+    <div class="callout">
+      <b>关键理解：</b>二叉树的定义是<strong>递归的</strong>——左子树和右子树本身也是二叉树。这种"自己定义自己"的结构，正是递归算法能优雅处理二叉树的根本原因。
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 6 — FOUR FORMS + FULL/COMPLETE (P98)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="二叉树的形态">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="done">理解二叉树的特点与性质</li>
+      <li class="current">区分满二叉树与完全二叉树</li>
+      <li>掌握三种遍历算法</li>
+      <li>能应用遍历解决实际问题</li>
+    </ul>
+    <h5>速记</h5>
+    <p style="font-size:12px;color:var(--text-3);line-height:1.8">
+      满二叉树：每层全满<br>
+      完全二叉树：末尾连续缺失<br>
+      满二叉 → 完全二叉<br>
+      完全二叉 ↛ 满二叉
+    </p>
+  </aside>
+  <div class="main">
+    <p class="kicker">3.5.1 二叉树的概念</p>
+    <h2 class="h2 mt-s">四种基本形态 · 满二叉树 · 完全二叉树</h2>
+
+    <!-- 四种基本形态 -->
+    <h4 style="color:var(--accent);margin:16px 0 8px">▸ 四种基本形态（非空二叉树）</h4>
+    <div class="form-cards">
+      <div class="form-card">
+        <svg viewBox="0 0 70 80" width="70" height="80"><circle cx="35" cy="22" r="15" fill="none" stroke="var(--accent)" stroke-width="3"/><text x="35" y="27" text-anchor="middle" fill="var(--text-1)" font-size="15" font-weight="700">A</text></svg>
+        <p style="font-size:12px;color:var(--text-2);margin-top:6px">(a) 仅根节点</p>
+      </div>
+      <div class="form-card">
+        <svg viewBox="0 0 70 80" width="70" height="80"><circle cx="35" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="3"/><text x="35" y="23" text-anchor="middle" fill="var(--text-1)" font-size="15" font-weight="700">A</text><line x1="32" y1="30" x2="22" y2="58" stroke="var(--border)" stroke-width="2"/><rect x="6" y="55" width="32" height="24" rx="4" fill="none" stroke="var(--text-3)" stroke-dasharray="3"/></svg>
+        <p style="font-size:12px;color:var(--text-2);margin-top:6px">(b) 仅左子树</p>
+      </div>
+      <div class="form-card">
+        <svg viewBox="0 0 70 80" width="70" height="80"><circle cx="35" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="3"/><text x="35" y="23" text-anchor="middle" fill="var(--text-1)" font-size="15" font-weight="700">A</text><line x1="38" y1="30" x2="48" y2="58" stroke="var(--border)" stroke-width="2"/><rect x="32" y="55" width="32" height="24" rx="4" fill="none" stroke="var(--text-3)" stroke-dasharray="3"/></svg>
+        <p style="font-size:12px;color:var(--text-2);margin-top:6px">(c) 仅右子树</p>
+      </div>
+      <div class="form-card">
+        <svg viewBox="0 0 70 80" width="70" height="80"><circle cx="35" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="3"/><text x="35" y="23" text-anchor="middle" fill="var(--text-1)" font-size="15" font-weight="700">A</text><line x1="32" y1="30" x2="18" y2="58" stroke="var(--border)" stroke-width="2"/><line x1="38" y1="30" x2="52" y2="58" stroke="var(--border)" stroke-width="2"/><rect x="2" y="55" width="28" height="24" rx="4" fill="none" stroke="var(--text-3)" stroke-dasharray="3"/><rect x="40" y="55" width="28" height="24" rx="4" fill="none" stroke="var(--text-3)" stroke-dasharray="3"/></svg>
+        <p style="font-size:12px;color:var(--text-2);margin-top:6px">(d) 左右子树都有</p>
+      </div>
+    </div>
+
+    <!-- 满二叉树 vs 完全二叉树 -->
+    <h4 style="color:var(--accent);margin:20px 0 8px">▸ 满二叉树 vs 完全二叉树</h4>
+    <div style="display:flex;gap:24px;align-items:center">
+      <div class="concept-box" style="flex:1;text-align:center">
+        <p style="font-weight:700;color:var(--accent);margin-bottom:8px">满二叉树</p>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.8">
+          每一层的节点数都达到<strong>最大值</strong><br>
+          所有<strong>叶节点在同一层</strong><br>
+          每个分支节点都有左右子树<br>
+          <span style="color:var(--accent-2)">深度为k的满二叉树有 2ᵏ−1 个节点</span>
+        </p>
+      </div>
+      <div style="font-size:24px;color:var(--text-3)">→</div>
+      <div class="concept-box" style="flex:1;text-align:center">
+        <p style="font-weight:700;color:var(--accent-2);margin-bottom:8px">完全二叉树</p>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.8">
+          对满二叉树<strong>从上到下、同层从左到右</strong>编号<br>
+          按<strong>从大到小</strong>的顺序连续删除若干节点<br>
+          剩下的就是<strong>完全二叉树</strong><br>
+          <span style="color:var(--accent)">满二叉树是完全二叉树的特例</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 7 — TRAVERSAL CONCEPT (P99-100)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="遍历的概念">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="done">理解二叉树的特点与性质</li>
+      <li class="done">区分满二叉树与完全二叉树</li>
+      <li class="current">掌握先根序遍历算法</li>
+      <li>掌握中根序遍历算法</li>
+      <li>掌握后根序遍历算法</li>
+      <li>能应用遍历解决实际问题</li>
+    </ul>
+    <h5>本节示例树</h5>
+    <p style="font-size:12px;color:var(--text-3);line-height:1.7">
+      表达式：<strong>(a+b) × (c/d)</strong><br>
+      对应二叉树见右侧
+    </p>
+  </aside>
+  <div class="main">
+    <p class="kicker">3.5.2 二叉树的基本操作</p>
+    <h2 class="h2 mt-s">什么是二叉树的遍历？</h2>
+    <p class="lede mt-m">
+      <strong>遍历（Traversal）</strong>：从根节点出发，按照某种<strong>次序</strong>依次访问二叉树中所有节点，每个节点<strong>仅被访问一次</strong>。
+    </p>
+    <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+      <div class="concept-box">
+        <h4>🔄 遍历需要完成三项工作</h4>
+        <p style="font-size:14px;color:var(--text-2);line-height:2.2">
+          ① <strong style="color:var(--accent)">访问根节点</strong><br>
+          ② <strong>遍历左子树</strong><br>
+          ③ <strong>遍历右子树</strong>
+        </p>
+        <p style="font-size:12px;color:var(--text-3);margin-top:8px">
+          如果规定<strong>"先左后右"</strong>，那么根节点的访问时机就决定了三种遍历方式。
+        </p>
+      </div>
+      <div class="concept-box">
+        <h4>📐 三种遍历方式</h4>
+        <p style="font-size:14px;color:var(--text-2);line-height:2.2">
+          <span style="color:var(--accent);font-weight:700">先根序</span>：根 → 左 → 右<br>
+          <span style="color:var(--accent-2);font-weight:700">中根序</span>：左 → 根 → 右<br>
+          <span style="color:var(--accent-3);font-weight:700">后根序</span>：左 → 右 → 根
+        </p>
+      </div>
+    </div>
+    <div class="callout">
+      <b>为什么遍历是基础？</b> 二叉树的<strong>查找、插入、删除</strong>等操作，本质上都是在遍历过程中完成的。掌握了遍历，就掌握了二叉树操作的核心。
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 8 — PRE-ORDER TRAVERSAL (P100)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="先根序遍历" id="slide-preorder">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="done">理解二叉树的特点与性质</li>
+      <li class="done">区分满二叉树与完全二叉树</li>
+      <li class="current">掌握先根序遍历算法</li>
+      <li>掌握中根序遍历算法</li>
+      <li>掌握后根序遍历算法</li>
+      <li>能应用遍历解决实际问题</li>
+    </ul>
+    <h5>口诀</h5>
+    <p style="font-size:14px;color:var(--accent);font-weight:700">遇根就访问</p>
+    <h5>结果</h5>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--accent)">* + a b / c d</p>
+    <p style="font-size:11px;color:var(--text-3)">前缀表达式（波兰式）</p>
+  </aside>
+  <div class="main">
+    <p class="kicker">遍历算法详解</p>
+    <h2 class="h2 mt-s">先根序遍历 · 根 → 左 → 右</h2>
+
+    <div class="grid" style="display:grid;grid-template-columns:320px 1fr;gap:20px;margin-top:14px">
+      <!-- Tree visualization -->
+      <div class="tree-viz" id="tree-panel-pre">
+        <svg id="svg-pre" viewBox="0 0 360 320" width="360" height="320">
+          <line x1="180" y1="38" x2="105" y2="130" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="180" y1="38" x2="255" y2="130" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="105" y1="130" x2="42" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="105" y1="130" x2="158" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="255" y1="130" x2="205" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="255" y1="130" x2="310" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <g class="tree-node" id="pre-n0"><circle cx="180" cy="34" r="22" fill="var(--bg)" stroke="var(--accent)" stroke-width="3"/><text x="180" y="40" text-anchor="middle" fill="var(--text-1)" font-size="17" font-weight="700">*</text></g>
+          <g class="tree-node" id="pre-n1"><circle cx="105" cy="128" r="19" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/><text x="105" y="134" text-anchor="middle" fill="var(--text-1)" font-size="14" font-weight="600">+</text></g>
+          <g class="tree-node" id="pre-n2"><circle cx="42" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="42" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">a</text></g>
+          <g class="tree-node" id="pre-n3"><circle cx="158" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="158" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">b</text></g>
+          <g class="tree-node" id="pre-n4"><circle cx="255" cy="128" r="19" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/><text x="255" y="134" text-anchor="middle" fill="var(--text-1)" font-size="14" font-weight="600">/</text></g>
+          <g class="tree-node" id="pre-n5"><circle cx="205" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="205" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">c</text></g>
+          <g class="tree-node" id="pre-n6"><circle cx="310" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="310" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">d</text></g>
+        </svg>
+      </div>
+      <!-- Info panel -->
+      <div>
+        <div class="algo-steps">
+          <h5 style="color:var(--accent);margin:0 0 6px;font-size:13px;letter-spacing:.08em">算法步骤（递归）</h5>
+          <ol>
+            <li id="pre-s1">若二叉树为空，则空操作返回</li>
+            <li id="pre-s2">否则：① <strong>访问根节点</strong></li>
+            <li id="pre-s3">② 先根序遍历<strong>左子树</strong></li>
+            <li id="pre-s4">③ 先根序遍历<strong>右子树</strong></li>
+          </ol>
+        </div>
+        <div class="seq-display" id="pre-seq">
+          <span class="ch" data-idx="0">*</span><span class="ch" data-idx="1">+</span><span class="ch" data-idx="2">a</span><span class="ch" data-idx="3">b</span><span class="ch" data-idx="4">/</span><span class="ch" data-idx="5">c</span><span class="ch" data-idx="6">d</span>
+        </div>
+        <div class="trav-ctrls">
+          <button class="play-btn" onclick="runTrav('pre')">▶ 自动演示</button>
+          <button id="pre-step" onclick="stepTrav('pre')">⏭ 逐步</button>
+          <button onclick="resetTrav('pre')">↺ 重置</button>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">先根序遍历的核心是"先访问根，再处理子树"。演示时请用逐步模式，让同学们跟着步骤数逐个节点追踪。注意：访问顺序是 * → + → a → b → / → c → d，结果序列为 *+ab/cd，这叫前缀表达式或波兰式。</aside>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 9 — IN-ORDER TRAVERSAL (P101)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="中根序遍历" id="slide-inorder">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="done">理解二叉树的特点与性质</li>
+      <li class="done">区分满二叉树与完全二叉树</li>
+      <li class="done">掌握先根序遍历算法</li>
+      <li class="current">掌握中根序遍历算法</li>
+      <li>掌握后根序遍历算法</li>
+      <li>能应用遍历解决实际问题</li>
+    </ul>
+    <h5>口诀</h5>
+    <p style="font-size:14px;color:var(--accent-2);font-weight:700">左完再取根</p>
+    <h5>结果</h5>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--accent-2)">a + b * c / d</p>
+    <p style="font-size:11px;color:var(--text-3)">中缀表达式（日常书写的算式！）</p>
+  </aside>
+  <div class="main">
+    <p class="kicker">遍历算法详解</p>
+    <h2 class="h2 mt-s">中根序遍历 · 左 → 根 → 右</h2>
+    <div class="grid" style="display:grid;grid-template-columns:320px 1fr;gap:20px;margin-top:14px">
+      <div class="tree-viz" id="tree-panel-in">
+        <svg id="svg-in" viewBox="0 0 360 320" width="360" height="320">
+          <line x1="180" y1="38" x2="105" y2="130" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="180" y1="38" x2="255" y2="130" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="105" y1="130" x2="42" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="105" y1="130" x2="158" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="255" y1="130" x2="205" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="255" y1="130" x2="310" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <g class="tree-node" id="in-n0"><circle cx="180" cy="34" r="22" fill="var(--bg)" stroke="var(--accent-2)" stroke-width="3"/><text x="180" y="40" text-anchor="middle" fill="var(--text-1)" font-size="17" font-weight="700">*</text></g>
+          <g class="tree-node" id="in-n1"><circle cx="105" cy="128" r="19" fill="var(--bg)" stroke="var(--accent-2)" stroke-width="2"/><text x="105" y="134" text-anchor="middle" fill="var(--text-1)" font-size="14" font-weight="600">+</text></g>
+          <g class="tree-node" id="in-n2"><circle cx="42" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="42" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">a</text></g>
+          <g class="tree-node" id="in-n3"><circle cx="158" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="158" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">b</text></g>
+          <g class="tree-node" id="in-n4"><circle cx="255" cy="128" r="19" fill="var(--bg)" stroke="var(--accent-2)" stroke-width="2"/><text x="255" y="134" text-anchor="middle" fill="var(--text-1)" font-size="14" font-weight="600">/</text></g>
+          <g class="tree-node" id="in-n5"><circle cx="205" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="205" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">c</text></g>
+          <g class="tree-node" id="in-n6"><circle cx="310" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="310" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">d</text></g>
+        </svg>
+      </div>
+      <div>
+        <div class="algo-steps">
+          <h5 style="color:var(--accent-2);margin:0 0 6px;font-size:13px;letter-spacing:.08em">算法步骤（递归）</h5>
+          <ol>
+            <li id="in-s1">若二叉树为空，则空操作返回</li>
+            <li id="in-s2">否则：① 中根序遍历<strong>左子树</strong></li>
+            <li id="in-s3">② <strong>访问根节点</strong></li>
+            <li id="in-s4">③ 中根序遍历<strong>右子树</strong></li>
+          </ol>
+        </div>
+        <div class="seq-display" id="in-seq">
+          <span class="ch" data-idx="0">a</span><span class="ch" data-idx="1">+</span><span class="ch" data-idx="2">b</span><span class="ch" data-idx="3">*</span><span class="ch" data-idx="4">c</span><span class="ch" data-idx="5">/</span><span class="ch" data-idx="6">d</span>
+        </div>
+        <div class="trav-ctrls">
+          <button class="play-btn" style="background:var(--accent-2);border-color:var(--accent-2)" onclick="runTrav('in')">▶ 自动演示</button>
+          <button id="in-step" style="color:var(--accent-2);border-color:var(--accent-2)" onclick="stepTrav('in')">⏭ 逐步</button>
+          <button onclick="resetTrav('in')">↺ 重置</button>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">中根序遍历的结果是 a+b*c/d，这正是我们日常书写的算式形式！这就是为什么中根序最"自然"——它产出的就是中缀表达式。但计算机实际上无法直接解析中缀表达式（因为有运算符优先级和括号的问题）。</aside>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 10 — POST-ORDER TRAVERSAL (P101)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="后根序遍历" id="slide-postorder">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="done">理解二叉树的特点与性质</li>
+      <li class="done">区分满二叉树与完全二叉树</li>
+      <li class="done">掌握先根序遍历算法</li>
+      <li class="done">掌握中根序遍历算法</li>
+      <li class="current">掌握后根序遍历算法</li>
+      <li>能应用遍历解决实际问题</li>
+    </ul>
+    <h5>口诀</h5>
+    <p style="font-size:14px;color:var(--accent-3);font-weight:700">左右走完再拿根</p>
+    <h5>结果</h5>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--accent-3)">a b + c d / *</p>
+    <p style="font-size:11px;color:var(--text-3)">后缀表达式（逆波兰式——计算机求值用）</p>
+  </aside>
+  <div class="main">
+    <p class="kicker">遍历算法详解</p>
+    <h2 class="h2 mt-s">后根序遍历 · 左 → 右 → 根</h2>
+    <div class="grid" style="display:grid;grid-template-columns:320px 1fr;gap:20px;margin-top:14px">
+      <div class="tree-viz" id="tree-panel-post">
+        <svg id="svg-post" viewBox="0 0 360 320" width="360" height="320">
+          <line x1="180" y1="38" x2="105" y2="130" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="180" y1="38" x2="255" y2="130" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="105" y1="130" x2="42" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="105" y1="130" x2="158" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="255" y1="130" x2="205" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <line x1="255" y1="130" x2="310" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+          <g class="tree-node" id="post-n0"><circle cx="180" cy="34" r="22" fill="var(--bg)" stroke="var(--accent-3)" stroke-width="3"/><text x="180" y="40" text-anchor="middle" fill="var(--text-1)" font-size="17" font-weight="700">*</text></g>
+          <g class="tree-node" id="post-n1"><circle cx="105" cy="128" r="19" fill="var(--bg)" stroke="var(--accent-3)" stroke-width="2"/><text x="105" y="134" text-anchor="middle" fill="var(--text-1)" font-size="14" font-weight="600">+</text></g>
+          <g class="tree-node" id="post-n2"><circle cx="42" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="42" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">a</text></g>
+          <g class="tree-node" id="post-n3"><circle cx="158" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="158" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">b</text></g>
+          <g class="tree-node" id="post-n4"><circle cx="255" cy="128" r="19" fill="var(--bg)" stroke="var(--accent-3)" stroke-width="2"/><text x="255" y="134" text-anchor="middle" fill="var(--text-1)" font-size="14" font-weight="600">/</text></g>
+          <g class="tree-node" id="post-n5"><circle cx="205" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="205" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">c</text></g>
+          <g class="tree-node" id="post-n6"><circle cx="310" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="310" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">d</text></g>
+        </svg>
+      </div>
+      <div>
+        <div class="algo-steps">
+          <h5 style="color:var(--accent-3);margin:0 0 6px;font-size:13px;letter-spacing:.08em">算法步骤（递归）</h5>
+          <ol>
+            <li id="post-s1">若二叉树为空，则空操作返回</li>
+            <li id="post-s2">否则：① 后根序遍历<strong>左子树</strong></li>
+            <li id="post-s3">② 后根序遍历<strong>右子树</strong></li>
+            <li id="post-s4">③ <strong>访问根节点</strong></li>
+          </ol>
+        </div>
+        <div class="seq-display" id="post-seq">
+          <span class="ch" data-idx="0">a</span><span class="ch" data-idx="1">b</span><span class="ch" data-idx="2">+</span><span class="ch" data-idx="3">c</span><span class="ch" data-idx="4">d</span><span class="ch" data-idx="5">/</span><span class="ch" data-idx="6">*</span>
+        </div>
+        <div class="trav-ctrls">
+          <button class="play-btn" style="background:var(--accent-3);border-color:var(--accent-3)" onclick="runTrav('post')">▶ 自动演示</button>
+          <button id="post-step" style="color:var(--accent-3);border-color:var(--accent-3)" onclick="stepTrav('post')">⏭ 逐步</button>
+          <button onclick="resetTrav('post')">↺ 重置</button>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">后根序遍历产生的是后缀表达式（逆波兰式），这是计算机实际用来求值的形式！因为后缀表达式不需要括号，也不需要考虑运算符优先级。计算机只需要一个栈就能高效求值。这就是为什么说"二叉树遍历不只是理论，它在编译器、计算器中有直接的应用"。</aside>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 11 — COMPARISON (P100-102)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="三种遍历对比">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="done">理解二叉树的特点与性质</li>
+      <li class="done">区分满二叉树与完全二叉树</li>
+      <li class="done">掌握先根序遍历算法</li>
+      <li class="done">掌握中根序遍历算法</li>
+      <li class="done">掌握后根序遍历算法</li>
+      <li class="current">能应用遍历解决实际问题</li>
+    </ul>
+    <h5>记忆技巧</h5>
+    <p style="font-size:12px;color:var(--text-3);line-height:1.8">
+      三种遍历的命名：<br>
+      <strong>"先/中/后"指根节点的访问时机</strong><br>
+      左右次序永远不变（先左后右）
+    </p>
+  </aside>
+  <div class="main">
+    <p class="kicker">遍历总结</p>
+    <h2 class="h2 mt-s">三种遍历对比 · 同一棵树，三种视角</h2>
+
+    <table class="cmp-table" style="margin-top:16px">
+      <thead><tr><th>遍历方式</th><th>次序</th><th>序列结果</th><th>表达式类型</th><th>应用场景</th></tr></thead>
+      <tbody>
+        <tr><td><strong style="color:var(--accent)">先根序</strong></td><td>根→左→右</td><td class="mono">* + a b / c d</td><td>前缀式（波兰式）</td><td>复制树结构、表达式解析</td></tr>
+        <tr><td><strong style="color:var(--accent-2)">中根序</strong></td><td>左→根→右</td><td class="mono">a + b * c / d</td><td>中缀式（日常算式）</td><td><strong>输出排序序列</strong>（BST）</td></tr>
+        <tr><td><strong style="color:var(--accent-3)">后根序</strong></td><td>左→右→根</td><td class="mono">a b + c d / *</td><td>后缀式（逆波兰式）</td><td><strong>计算机表达式求值</strong>、删除树</td></tr>
+      </tbody>
+    </table>
+
+    <div class="cmp-grid" style="margin-top:16px">
+      <div class="cmp-card"><div class="card-icon">🔵</div><h4 style="color:var(--accent)">先根序口诀</h4><p class="mono-seq">遇根就访问</p><p style="font-size:12px;color:var(--text-3)">看到节点就记录</p></div>
+      <div class="cmp-card"><div class="card-icon">🟠</div><h4 style="color:var(--accent-2)">中根序口诀</h4><p class="mono-seq">左完再取根</p><p style="font-size:12px;color:var(--text-3)">左子树走到底再回头</p></div>
+      <div class="cmp-card"><div class="card-icon">🟢</div><h4 style="color:var(--accent-3)">后根序口诀</h4><p class="mono-seq">左右走完再拿根</p><p style="font-size:12px;color:var(--text-3)">左右都处理完才碰根</p></div>
+    </div>
+    <aside class="notes">强调一个关键点：三种遍历的命名取决于"根"什么时候被访问。先根=先访根，中根=中间访根，后根=最后访根。左右次序始终是先左后右，不会变。</aside>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 12 — EXPRESSION TREE APPLICATION
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="表达式二叉树应用">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="done">理解二叉树的特点与性质</li>
+      <li class="done">区分满二叉树与完全二叉树</li>
+      <li class="done">掌握三种遍历算法</li>
+      <li class="current">能应用遍历解决实际问题</li>
+    </ul>
+    <h5>关键洞察</h5>
+    <p style="font-size:12px;color:var(--text-3);line-height:1.7">
+      三种遍历 → 三种表达式<br>
+      这是二叉树从"数据结构"到"编译原理"的桥梁。
+    </p>
+  </aside>
+  <div class="main">
+    <p class="kicker">应用深入</p>
+    <h2 class="h2 mt-s">表达式二叉树：遍历即求值</h2>
+    <p class="lede mt-m">
+      算术表达式可以唯一地表示为一棵二叉树：<strong>运算符在非叶节点，操作数在叶节点</strong>。不同的遍历方式，恰好对应了三种表达式书写形式。
+    </p>
+    <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px">
+      <div class="concept-box">
+        <h4>🔵 先根序 → 前缀表达式</h4>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--accent)">* + a b / c d</p>
+        <p style="font-size:13px;color:var(--text-2);margin-top:8px">
+          也称为<strong>波兰式</strong>。运算符写在操作数之前。<br>
+          Lisp等函数式语言采用这种形式：<br>
+          <code style="background:var(--surface-2);padding:2px 6px;border-radius:3px">(* (+ a b) (/ c d))</code>
+        </p>
+      </div>
+      <div class="concept-box">
+        <h4>🟢 后根序 → 后缀表达式</h4>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--accent-3)">a b + c d / *</p>
+        <p style="font-size:13px;color:var(--text-2);margin-top:8px">
+          也称为<strong>逆波兰式（RPN）</strong>。<br>
+          <strong>计算机求值表达式的标准方式！</strong><br>
+          不需要括号，不需要优先级规则，只需一个栈。
+        </p>
+      </div>
+    </div>
+    <div class="callout">
+      <b>实际应用：</b>你的计算器APP、编程语言的编译器，都在用<strong>后缀表达式</strong>来计算数学表达式。二叉树的遍历，是连接"人类书写方式"和"机器计算方式"的桥梁。
+    </div>
+    <aside class="notes">可以现场演示一下：给同学们一个表达式，让他们画出二叉树，然后分别做三种遍历。例如：(a+b)*(c-d) 或者更复杂的 (3+4)*(5-2)/7。这会帮助大家理解"同一棵树，三种视角"的深刻含义。</aside>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 13 — ZOO PROBLEM (P102)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="动物园馆舍问题">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="done">理解二叉树的特点与性质</li>
+      <li class="done">区分满二叉树与完全二叉树</li>
+      <li class="done">掌握三种遍历算法</li>
+      <li class="current">能应用遍历解决实际问题</li>
+    </ul>
+    <h5>教材参考</h5>
+    <p style="font-size:12px;color:var(--text-3);line-height:1.7">
+      P.99 思考活动<br>
+      P.102 图3.5.17<br>
+      动物园馆舍遍历示意图
+    </p>
+  </aside>
+  <div class="main">
+    <p class="kicker">应用实践</p>
+    <h2 class="h2 mt-s">实际问题建模：游览动物园</h2>
+    <p class="lede mt-m">
+      某动物园有<strong>9个馆舍</strong>，馆舍之间有<strong>8条道路</strong>，出入口在长颈鹿馆处。<br>
+      问题：<strong>如何规划一条能将每个馆舍都游遍，且每个馆舍仅游览一次的路线？</strong>
+    </p>
+    <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+      <div class="concept-box">
+        <h4>📐 建模步骤</h4>
+        <p style="font-size:13px;color:var(--text-2);line-height:2">
+          ① 将<strong>馆舍抽象为节点</strong><br>
+          ② 将<strong>道路抽象为边</strong><br>
+          ③ 将动物园分布图表示为<strong>二叉树</strong><br>
+          ④ 应用遍历算法：三种遍历给出<strong>三种不同的游览顺序</strong>
+        </p>
+      </div>
+      <div class="concept-box">
+        <h4>🎯 三种游览顺序</h4>
+        <p style="font-size:13px;color:var(--text-2);line-height:2">
+          <span style="color:var(--accent)">先根序：</span>入口→先深入→出口<br>
+          <span style="color:var(--accent-2)">中根序：</span>左区→入口→右区<br>
+          <span style="color:var(--accent-3)">后根序：</span>由远及近返回入口<br>
+          每种顺序对应不同的游览体验！
+        </p>
+      </div>
+    </div>
+    <div class="callout">
+      <b>思维方式：</b>将现实世界的结构关系映射为数据模型（二叉树），再用算法（遍历）求解——这就是<strong>计算思维</strong>的核心过程。
+    </div>
+    <aside class="notes">这个例子非常好地展示了"数据结构"不是凭空发明的，而是对现实问题的抽象建模。让同学们思考：如果动物园不是二叉树结构（比如某个馆舍有三条路），还能用二叉树表示吗？为什么教材专门选二叉树来建模？</aside>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 14 — EXERCISE (P103 + custom)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="动手练习">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="done">理解二叉树的特点与性质</li>
+      <li class="done">区分满二叉树与完全二叉树</li>
+      <li class="done">掌握三种遍历算法</li>
+      <li class="current">能应用遍历解决实际问题</li>
+    </ul>
+    <h5>时间</h5>
+    <p style="font-size:12px;color:var(--text-3)">~8 分钟 · 独立完成</p>
+    <h5>教材参考</h5>
+    <p style="font-size:12px;color:var(--text-3)">P.103 练习提升<br>第1—2题</p>
+  </aside>
+  <div class="main">
+    <p class="kicker">练习提升</p>
+    <h2 class="h2 mt-s">动手练习：巩固你的理解</h2>
+
+    <div class="exercise">
+      <p style="font-weight:700;color:var(--text-1);font-size:16px;margin:0">练习一 · 找出二叉树</p>
+      <p style="font-size:14px;color:var(--text-2);margin:8px 0">
+        根据二叉树的定义（每个节点最多两棵子树，且左右有序），判断下面哪些是二叉树？
+      </p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text-2);line-height:2">
+        <span style="background:var(--surface);padding:4px 12px;border-radius:6px;border:1px solid var(--border)">A. 根有左子树、右子树，左子节点还有一个右子节点</span>
+        <span style="background:var(--surface);padding:4px 12px;border-radius:6px;border:1px solid var(--border)">B. 根有两棵子树，各有两个子节点——标准的满二叉树</span>
+        <span style="background:var(--surface);padding:4px 12px;border-radius:6px;border:1px solid var(--border)">C. 根节点下面接了三个子节点</span>
+        <span style="background:var(--surface);padding:4px 12px;border-radius:6px;border:1px solid var(--border)">D. 根只有右子树，右子树根又有左右子树</span>
+      </div>
+      <p style="font-size:12px;color:var(--accent);margin-top:8px">提示：回忆二叉树的两个核心特点——度≤2 且 左右有序。</p>
+    </div>
+
+    <div class="exercise" style="margin-top:14px">
+      <p style="font-weight:700;color:var(--text-1);font-size:16px;margin:0">练习二 · 3个节点的二叉树</p>
+      <p style="font-size:14px;color:var(--text-2);margin:8px 0">
+        某二叉树有3个节点。两位同学争执不下：一人认为形态如 (a)——根+左+右；另一人认为形态如 (b)——根→右→右。你赞同谁？<strong>3个节点的二叉树一共有多少种不同的形态？请画出所有形态。</strong>
+      </p>
+      <p style="font-size:12px;color:var(--accent)">提示：注意左右子树的区分！形态 (a) 和形态 (b) 都是合法的。还有其他的吗？</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 15 — MCQ INTERACTIVE CHECK
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="互动自检">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">了解树形结构与二叉树概念</li>
+      <li class="done">理解二叉树的特点与性质</li>
+      <li class="done">区分满二叉树与完全二叉树</li>
+      <li class="done">掌握三种遍历算法</li>
+      <li class="done">能应用遍历解决实际问题</li>
+    </ul>
+    <h5>自检说明</h5>
+    <p style="font-size:12px;color:var(--text-3);line-height:1.7">
+      点击每个选项查看对错。<br>
+      目标：<strong>4题全对</strong>。
+    </p>
+  </aside>
+  <div class="main">
+    <p class="kicker">互动自检</p>
+    <h2 class="h2 mt-s">来，检验一下你的理解！</h2>
+    <p style="font-size:14px;color:var(--text-2);margin-bottom:12px">点击选项即可查看答案——（互动选择题）</p>
+
+    <!-- Q1 -->
+    <p style="font-weight:700;color:var(--text-1);margin:14px 0 6px;font-size:15px">Q1. 关于二叉树，以下说法正确的是？</p>
+    <div class="mcq" onclick="this.classList.add('reveal-wrong');this.querySelector('.feedback').textContent='✗ 二叉树可以为空（n=0）。空树也是一棵二叉树。'"><div class="letter">A</div><div>二叉树至少有一个节点</div><div class="feedback"></div></div>
+    <div class="mcq" onclick="this.classList.add('reveal-correct');this.querySelector('.feedback').textContent='✓ 正确！二叉树的每个节点最多有两棵子树，没有子树或只有一棵子树都是允许的。'"><div class="letter">B</div><div>二叉树中，每个节点的度可以等于0、1或2</div><div class="feedback"></div></div>
+    <div class="mcq" onclick="this.classList.add('reveal-wrong');this.querySelector('.feedback').textContent='✗ 二叉树的左右子树次序不可颠倒。即使只有一棵子树，也要明确是左还是右。'"><div class="letter">C</div><div>二叉树中，左子树和右子树的次序可以交换</div><div class="feedback"></div></div>
+
+    <!-- Q2 -->
+    <p style="font-weight:700;color:var(--text-1);margin:16px 0 6px;font-size:15px">Q2. 满二叉树与完全二叉树的关系是？</p>
+    <div class="mcq" onclick="this.classList.add('reveal-wrong');this.querySelector('.feedback').textContent='✗ 完全二叉树不一定是满二叉树。例如去掉满二叉树的最后几个叶节点，得到的是完全二叉树但不是满二叉树。'"><div class="letter">A</div><div>完全二叉树一定是满二叉树</div><div class="feedback"></div></div>
+    <div class="mcq" onclick="this.classList.add('reveal-correct');this.querySelector('.feedback').textContent='✓ 正确！满二叉树是完全二叉树的特例——当完全二叉树的最后一层也全满时，就是满二叉树。'"><div class="letter">B</div><div>满二叉树一定是完全二叉树</div><div class="feedback"></div></div>
+    <div class="mcq" onclick="this.classList.add('reveal-wrong');this.querySelector('.feedback').textContent='✗ 两者有关系：满二叉树是一种特殊的完全二叉树。'"><div class="letter">C</div><div>满二叉树和完全二叉树没有关系</div><div class="feedback"></div></div>
+
+    <!-- Q3 -->
+    <p style="font-weight:700;color:var(--text-1);margin:16px 0 6px;font-size:15px">Q3. 对于表达式二叉树 (a+b)×(c/d)，后根序遍历的结果是？</p>
+    <div class="mcq" onclick="this.classList.add('reveal-wrong');this.querySelector('.feedback').textContent='✗ 这是先根序（前缀表达式/波兰式）的结果。'"><div class="letter">A</div><div style="font-family:'JetBrains Mono',monospace">* + a b / c d</div><div class="feedback"></div></div>
+    <div class="mcq" onclick="this.classList.add('reveal-wrong');this.querySelector('.feedback').textContent='✗ 这是中根序（中缀表达式）的结果。注意日常算式需要加括号才是完整的：(a+b)*(c/d)。'"><div class="letter">B</div><div style="font-family:'JetBrains Mono',monospace">a + b * c / d</div><div class="feedback"></div></div>
+    <div class="mcq" onclick="this.classList.add('reveal-correct');this.querySelector('.feedback').textContent='✓ 正确！后根序 = 后缀表达式（逆波兰式）。计算机用这个形式来求值表达式，只需要一个栈。'"><div class="letter">C</div><div style="font-family:'JetBrains Mono',monospace">a b + c d / *</div><div class="feedback"></div></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 16 — SUMMARY (full width)
+     ════════════════════════════════════════════ -->
+<section class="slide full" data-title="课堂小结">
+  <p class="kicker">课堂小结 · §3.5 二叉树</p>
+  <h1 class="h1 mt-s">本节核心回顾</h1>
+  <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;max-width:960px">
+    <div class="concept-box">
+      <h4>📖 概念回顾</h4>
+      <ul style="font-size:13px;color:var(--text-2);line-height:2;list-style:none;padding:0">
+        <li>▸ 二叉树：度 ≤ 2 的有序树</li>
+        <li>▸ 节点 · 度 · 深度 · 层次</li>
+        <li>▸ 根节点 · 叶节点 · 内部节点</li>
+        <li>▸ 四种基本形态</li>
+        <li>▸ 满二叉树 → 完全二叉树</li>
+      </ul>
+    </div>
+    <div class="concept-box">
+      <h4>🔄 三种遍历</h4>
+      <ul style="font-size:13px;color:var(--text-2);line-height:2;list-style:none;padding:0">
+        <li>▸ <span style="color:var(--accent)">先根序</span>：根左右 → 前缀式</li>
+        <li>▸ <span style="color:var(--accent-2)">中根序</span>：左根右 → 中缀式</li>
+        <li>▸ <span style="color:var(--accent-3)">后根序</span>：左右根 → 后缀式</li>
+        <li>▸ 递归思想贯穿始终</li>
+        <li>▸ 遍历是二叉树操作的基础</li>
+      </ul>
+    </div>
+    <div class="concept-box">
+      <h4>🎯 课后作业</h4>
+      <ul style="font-size:13px;color:var(--text-2);line-height:2;list-style:none;padding:0">
+        <li>▸ P.103 练习提升 第1题：找出二叉树</li>
+        <li>▸ P.103 练习提升 第2题：3节点形态</li>
+        <li>▸ P.102 动物园遍历：写出三种遍历序列</li>
+        <li>▸ 绘制本节知识思维导图</li>
+      </ul>
+    </div>
+    <div class="concept-box">
+      <h4>💡 延伸思考</h4>
+      <ul style="font-size:13px;color:var(--text-2);line-height:2;list-style:none;padding:0">
+        <li>▸ 二叉树为什么能高效组织数据？</li>
+        <li>▸ 递归遍历如果树太深会怎样？（栈溢出）</li>
+        <li>▸ 除了递归，还有什么方式实现遍历？（栈/迭代）</li>
+        <li>▸ 还有一种"层序遍历"——你听说过吗？</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:24px;max-width:960px">
+    <b>记住一句话：</b>二叉树的三种遍历，只有<strong>根节点的访问时机不同</strong>。左永远在右之前——把握住这一点，三种遍历就永远不会搞混。
+  </div>
+  <div class="deck-footer"><span>信息技术 选择性必修1 · §3.5 二叉树（第95—103页） · 授课人：张林</span><span class="slide-number" data-current="16" data-total="16"></span></div>
+</section>
+
+</div>
+
+<!-- ════════════════════════════════════════════
+     TRAVERSAL ANIMATION ENGINE
+     ════════════════════════════════════════════ -->
+<script>
+const TRAV = {
+  pre:{
+    nodeIds:['pre-n0','pre-n1','pre-n2','pre-n3','pre-n4','pre-n5','pre-n6'],
+    seqId:'pre-seq', color:'var(--accent)',
+    stepMap:{0:2,1:2,2:2,3:3,4:2,5:4,6:4}
+  },
+  in:{
+    nodeIds:['in-n2','in-n1','in-n3','in-n0','in-n5','in-n4','in-n6'],
+    seqId:'in-seq', color:'var(--accent-2)',
+    stepMap:{0:2,1:2,2:3,3:3,4:2,5:4,6:4}
+  },
+  post:{
+    nodeIds:['post-n2','post-n3','post-n1','post-n5','post-n6','post-n4','post-n0'],
+    seqId:'post-seq', color:'var(--accent-3)',
+    stepMap:{0:2,1:2,2:2,3:3,4:3,5:3,6:4}
+  }
+};
+
+const state = {
+  pre:{step:-1, running:false, timer:null},
+  in:{step:-1, running:false, timer:null},
+  post:{step:-1, running:false, timer:null}
+};
+
+function nEl(type,i){return document.getElementById(TRAV[type].nodeIds[i])}
+
+function hlNode(type,i,color){
+  let el=nEl(type,i);if(!el)return;
+  let c=el.querySelector('circle'),t=el.querySelector('text');
+  c.style.fill=color;c.style.stroke=color;
+  t.style.fill='#fff';el.style.transform='scale(1.15)';
+  setTimeout(()=>{el.style.transform='scale(1)'},320);
+  if(!el.querySelector('.step-badge')){
+    let g=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    g.setAttribute('cx',c.getAttribute('cx'));
+    g.setAttribute('cy',parseFloat(c.getAttribute('cy'))-15);
+    g.setAttribute('r','8');g.setAttribute('fill',color);
+    g.classList.add('step-badge');
+    let tb=document.createElementNS('http://www.w3.org/2000/svg','text');
+    tb.setAttribute('x',c.getAttribute('cx'));
+    tb.setAttribute('y',parseFloat(c.getAttribute('cy'))-12);
+    tb.setAttribute('text-anchor','middle');
+    tb.setAttribute('fill','#fff');tb.setAttribute('font-size','8');tb.setAttribute('font-weight','700');
+    tb.textContent=i+1;tb.classList.add('step-badge');
+    el.appendChild(g);el.appendChild(tb);
+  }
+}
+function visNode(type,i,color){
+  let el=nEl(type,i);if(!el)return;
+  el.querySelector('circle').style.fill=color+'20';
+  el.querySelector('circle').style.stroke=color;
+  el.querySelector('text').style.fill=color;
+}
+function rstNode(type,i,defColor){
+  let el=nEl(type,i);if(!el)return;
+  el.querySelector('circle').style.fill='var(--bg)';
+  el.querySelector('circle').style.stroke=defColor;
+  // Check if operator node (n0, n1, n4)
+  let opNode = TRAV[type].nodeIds[i].includes('n0') || TRAV[type].nodeIds[i].includes('n1') || TRAV[type].nodeIds[i].includes('n4');
+  el.querySelector('text').style.fill = opNode ? 'var(--text-1)' : 'var(--text-2)';
+  el.querySelectorAll('.step-badge').forEach(b=>b.remove());
+  el.style.transform='scale(1)';
+}
+function hlSeq(type,i){
+  let s=document.getElementById(TRAV[type].seqId);if(!s)return;
+  s.querySelectorAll('.ch').forEach((c,j)=>{
+    c.classList.remove('cur','done');
+    if(j<i)c.classList.add('done');
+    if(j===i)c.classList.add('cur');
+  });
+}
+function hlStep(type,idx){
+  let m=TRAV[type].stepMap;
+  for(let s=1;s<=4;s++){
+    let e=document.getElementById(type+'-s'+s);
+    if(e)e.classList.remove('hl');
+  }
+  let a=document.getElementById(type+'-s'+m[idx]);
+  if(a)a.classList.add('hl');
+}
+
+function stepTrav(type){
+  let st=state[type];if(st.running)return;
+  let nx=st.step+1;if(nx>=7)return;
+  st.step=nx;let c=TRAV[type];
+  if(nx>0)visNode(type,nx-1,c.color);
+  hlNode(type,nx,c.color);hlSeq(type,nx);hlStep(type,nx);
+  if(nx>=6)document.getElementById(type+'-step').disabled=true;
+}
+function runTrav(type){
+  let st=state[type];if(st.running)return;
+  resetTrav(type);st.running=true;st.step=-1;
+  let i=0,c=TRAV[type];
+  function tick(){
+    if(i>=7){st.running=false;document.getElementById(type+'-step').disabled=true;return}
+    st.step=i;if(i>0)visNode(type,i-1,c.color);
+    hlNode(type,i,c.color);hlSeq(type,i);hlStep(type,i);
+    i++;st.timer=setTimeout(tick,800);
+  }
+  tick();
+}
+function resetTrav(type){
+  let st=state[type];if(st.running){clearTimeout(st.timer);st.running=false}
+  st.step=-1;
+  let defCols=TRAV[type].nodeIds.map(id=>{
+    if(id.includes('n0')||id.includes('n1')||id.includes('n4'))return TRAV[type].color;
+    return 'var(--border-strong)';
+  });
+  TRAV[type].nodeIds.forEach((_,i)=>rstNode(type,i,defCols[i]));
+  let s=document.getElementById(TRAV[type].seqId);
+  if(s)s.querySelectorAll('.ch').forEach(c=>c.classList.remove('cur','done'));
+  for(let i=1;i<=4;i++){let e=document.getElementById(type+'-s'+i);if(e)e.classList.remove('hl')}
+  let btn=document.getElementById(type+'-step');if(btn)btn.disabled=false;
+}
+</script>
+<script src="assets/runtime.js"></script>
+</body>
+</html>

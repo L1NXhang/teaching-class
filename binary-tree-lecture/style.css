@@ -1,0 +1,111 @@
+/* course-module — academic but friendly, extended for binary tree lecture */
+.tpl-course-module{
+  --bg:#fbfaf6;--bg-soft:#f4f1e8;--surface:#ffffff;--surface-2:#f6f3ea;
+  --border:rgba(60,45,20,.12);--border-strong:rgba(60,45,20,.24);
+  --text-1:#2a2418;--text-2:#5a5140;--text-3:#8a7f68;
+  --accent:#2563eb;--accent-2:#d97706;--accent-3:#059669;
+  --grad:linear-gradient(135deg,#2563eb,#4f46e5);
+  --radius:14px;--radius-lg:20px;
+  --shadow:0 12px 30px rgba(60,45,20,.07);
+  font-family:'Inter','Noto Sans SC',sans-serif;
+}
+.tpl-course-module .slide{padding:56px 72px;background:var(--bg);display:grid;grid-template-columns:250px 1fr;gap:48px;align-content:start}
+.tpl-course-module .slide.full{grid-template-columns:1fr;display:flex;flex-direction:column;justify-content:center}
+.tpl-course-module .sidebar{border-right:1px solid var(--border);padding-right:28px;position:relative}
+.tpl-course-module .sidebar .brand{font-family:'Playfair Display','Noto Serif SC',serif;font-size:20px;font-weight:700;color:var(--accent)}
+.tpl-course-module .sidebar .brand::before{content:"✦ ";color:var(--accent-2)}
+.tpl-course-module .sidebar h5{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-3);margin:24px 0 10px}
+.tpl-course-module .obj-list{list-style:none;padding:0;margin:0;font-size:12px;color:var(--text-2);line-height:1.5}
+.tpl-course-module .obj-list li{padding:7px 0 7px 20px;position:relative;border-bottom:1px dashed var(--border)}
+.tpl-course-module .obj-list li::before{content:"○";position:absolute;left:0;top:7px;color:var(--accent)}
+.tpl-course-module .obj-list li.done::before{content:"●";color:var(--accent)}
+.tpl-course-module .obj-list li.current{color:var(--text-1);font-weight:700}
+.tpl-course-module .obj-list li.current::before{content:"▸";color:var(--accent-2)}
+.tpl-course-module .main{min-width:0}
+.tpl-course-module .h1{font-family:'Playfair Display','Noto Serif SC',serif;font-size:64px;line-height:1.05;font-weight:800;letter-spacing:-.02em;color:var(--text-1)}
+.tpl-course-module .h2{font-family:'Playfair Display','Noto Serif SC',serif;font-size:40px;line-height:1.12;font-weight:700;letter-spacing:-.015em;color:var(--text-1)}
+.tpl-course-module h3,.tpl-course-module h4{color:var(--text-1)}
+.tpl-course-module .kicker{color:var(--accent-2);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.tpl-course-module .lede{font-size:18px;color:var(--text-2);line-height:1.7}
+.tpl-course-module .callout{border-left:4px solid var(--accent-2);background:var(--surface-2);padding:18px 22px;border-radius:0 var(--radius) var(--radius) 0;margin-top:20px}
+.tpl-course-module .callout b{color:var(--accent-2)}
+.tpl-course-module .concept-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow)}
+.tpl-course-module .concept-box h4{margin-top:0;color:var(--accent)}
+.tpl-course-module .exercise{background:#fffbeb;border:1.5px dashed var(--accent-2);border-radius:var(--radius);padding:22px 26px}
+.tpl-course-module .exercise::before{content:"✎ 动手练习";display:block;font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--accent-2);margin-bottom:10px}
+.tpl-course-module .code{background:#1e1b2e;color:#e2e8f0;border-radius:var(--radius);padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.7;overflow:auto}
+.tpl-course-module .code .cmt{color:#94a3b8;font-style:italic}
+.tpl-course-module .code .kw{color:#f0a36a}
+.tpl-course-module .code .str{color:#7dd3a8}
+.tpl-course-module .mcq{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:8px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:all .2s}
+.tpl-course-module .mcq:hover{border-color:var(--accent)}
+.tpl-course-module .mcq .letter{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--text-3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--text-2)}
+.tpl-course-module .mcq.reveal-correct{border-color:var(--accent-3);background:rgba(5,150,105,.06)}
+.tpl-course-module .mcq.reveal-correct .letter{border-color:var(--accent-3);background:var(--accent-3);color:#fff}
+.tpl-course-module .mcq.reveal-wrong{border-color:var(--accent-3);background:rgba(5,150,105,.03)}
+.tpl-course-module .mcq .feedback{display:none;margin-top:6px;font-size:12px;font-weight:600}
+.tpl-course-module .mcq.reveal-correct .feedback,.tpl-course-module .mcq.reveal-wrong .feedback{display:block}
+.tpl-course-module .pill-academic{display:inline-block;padding:4px 12px;border-radius:4px;background:var(--surface-2);border:1px solid var(--border);font-size:12px;color:var(--text-2);font-family:'JetBrains Mono',monospace}
+.tpl-course-module .slide.full .h1{font-size:76px}
+.tpl-course-module .deck-footer{color:var(--text-3)}
+
+/* ── Tree visualization panel ── */
+.tree-viz{display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;min-height:260px;position:relative}
+.tree-viz svg{max-width:100%;max-height:300px}
+.tree-node circle{transition:fill .35s ease,stroke .35s ease,r .25s ease}
+.tree-node text{transition:fill .35s ease}
+.step-badge{transition:opacity .3s ease}
+
+/* ── Sequence output ── */
+.seq-display{display:flex;gap:4px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.06em;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-top:10px}
+.seq-display .ch{color:var(--text-3);transition:all .35s ease;min-width:20px;text-align:center}
+.seq-display .ch.done{color:var(--text-1)}
+.seq-display .ch.cur{color:var(--accent-2);font-weight:700;transform:scale(1.2)}
+
+/* ── Traversal buttons ── */
+.trav-ctrls{display:flex;gap:8px;margin-top:10px}
+.trav-ctrls button{padding:8px 16px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-1);cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+.trav-ctrls button:hover{border-color:var(--accent);color:var(--accent)}
+.trav-ctrls button.play-btn{background:var(--accent);color:#fff;border-color:var(--accent)}
+.trav-ctrls button:disabled{opacity:.3;cursor:not-allowed}
+
+/* ── Algorithm step highlight ── */
+.algo-steps ol{padding-left:18px;margin:6px 0 0}
+.algo-steps ol li{line-height:2.1;font-size:14px;color:var(--text-2);transition:all .3s}
+.algo-steps ol li.hl{color:var(--accent-2);font-weight:700;transform:translateX(2px)}
+
+/* ── Comparison grid ── */
+.cmp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.cmp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;text-align:center;box-shadow:var(--shadow)}
+.cmp-card .card-icon{font-size:28px;margin-bottom:8px}
+.cmp-card h4{margin:0 0 6px}
+.cmp-card .mono-seq{font-family:'JetBrains Mono',monospace;font-size:17px;color:var(--accent);letter-spacing:.06em;margin:8px 0;font-weight:500}
+
+/* ── Cover image ── */
+.cover-book{width:160px;border-radius:5px;box-shadow:0 10px 36px rgba(0,0,0,.2);margin-bottom:20px}
+.cover-book img{width:100%;display:block;border-radius:5px}
+.obj-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.obj-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;background:var(--surface);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text-2)}
+
+/* ── Form cards ── */
+.form-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+
+/* ── Zoo problem ── */
+.zoo-grid{display:grid;grid-template-columns:260px 1fr;gap:24px}
+
+/* ── Responsive ── */
+@media(max-width:1100px){
+  .tpl-course-module .slide{padding:32px 40px;grid-template-columns:220px 1fr;gap:32px}
+  .tpl-course-module .h1{font-size:48px}
+  .tpl-course-module .h2{font-size:32px}
+  .cmp-grid{grid-template-columns:1fr}
+  .form-cards{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:800px){
+  .tpl-course-module .slide{grid-template-columns:1fr;padding:24px 28px}
+  .tpl-course-module .sidebar{display:none}
+  .tpl-course-module .h1{font-size:36px}
+  .tpl-course-module .h2{font-size:26px}
+  .zoo-grid{grid-template-columns:1fr}
+}
