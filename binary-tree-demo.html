@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二叉树及其遍历 — 信息技术 选择性必修1</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --blue: #1e3a5f;
+    --teal: #00b4d8;
+    --gold: #e8b86d;
+    --orange: #ff6b35;
+    --text: #e2e8f0;
+    --muted: #8899aa;
+    --red: #ef4444;
+    --green: #22c55e;
+    --purple: #a855f7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;
+    overflow: hidden;
+    width: 100vw; height: 100vh;
+  }
+
+  /* ── slide container ── */
+  .deck {
+    width: 100vw; height: 100vh;
+    position: relative;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    display: none;
+    flex-direction: column;
+    padding: 40px 60px;
+  }
+  .slide.active { display: flex; }
+
+  /* ── nav ── */
+  .slide-nav {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 10px; z-index: 100;
+    background: rgba(17,24,39,0.9);
+    padding: 8px 16px; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .slide-nav .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer; transition: all .3s;
+  }
+  .slide-nav .dot.active { background: var(--teal); box-shadow: 0 0 10px var(--teal); }
+  .slide-nav .dot.done { background: var(--blue); }
+
+  .nav-hint {
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    font-size: 12px; color: var(--muted); z-index: 100;
+    letter-spacing: 1px;
+  }
+
+  /* ── Cover Slide ── */
+  .cover {
+    align-items: center; justify-content: center;
+    text-align: center;
+    background: radial-gradient(ellipse at center, rgba(0,180,216,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 30%, rgba(232,184,109,0.05) 0%, transparent 50%);
+  }
+  .cover .book-cover {
+    width: 300px; border-radius: 6px;
+    box-shadow: 0 12px 60px rgba(0,0,0,0.6), 0 0 30px rgba(0,180,216,0.1);
+    margin-bottom: 36px;
+  }
+  .cover h1 {
+    font-size: 42px; font-weight: 700;
+    background: linear-gradient(135deg, var(--teal), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px; letter-spacing: 2px;
+  }
+  .cover .meta {
+    font-size: 15px; color: var(--muted);
+    line-height: 1.8; letter-spacing: 1px;
+  }
+  .cover .meta strong { color: var(--teal); }
+  .cover .teacher {
+    margin-top: 28px; font-size: 14px; color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* ── Content Slides ── */
+  .content-slide h2 {
+    font-size: 32px; font-weight: 700;
+    border-left: 4px solid var(--teal);
+    padding-left: 16px; margin-bottom: 32px;
+    letter-spacing: 1px;
+  }
+  .content-slide .subtitle {
+    font-size: 14px; color: var(--muted); margin-bottom: 20px;
+    letter-spacing: 2px;
+  }
+
+  /* Slide 2: Tree concepts */
+  .concept-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+    flex: 1;
+  }
+  .concept-grid .card {
+    background: var(--surface); border-radius: 12px;
+    padding: 28px; border: 1px solid rgba(255,255,255,0.05);
+  }
+  .concept-grid .card h3 {
+    font-size: 18px; color: var(--gold); margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+  .concept-grid .card p { color: var(--muted); line-height: 1.8; font-size: 14px; }
+  .tree-svg-small text { font-family: 'Microsoft YaHei', sans-serif; }
+
+  /* ── Traversal Slides ── */
+  .traversal-layout {
+    display: flex; gap: 40px; flex: 1; align-items: center;
+  }
+  .traversal-layout .tree-panel {
+    flex: 0 0 420px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .traversal-layout .info-panel {
+    flex: 1; display: flex; flex-direction: column; gap: 24px;
+  }
+  .info-panel .algo-steps {
+    background: var(--surface); border-radius: 12px;
+    padding: 24px; border: 1px solid rgba(255,255,255,0.05);
+  }
+  .info-panel .algo-steps h3 {
+    font-size: 16px; color: var(--gold); margin-bottom: 14px;
+    letter-spacing: 1px;
+  }
+  .info-panel .algo-steps ol {
+    color: var(--muted); padding-left: 20px; line-height: 2.2;
+    font-size: 14px;
+  }
+  .info-panel .algo-steps ol li.highlight {
+    color: var(--orange); font-weight: 600;
+  }
+  .sequence-box {
+    background: var(--surface); border-radius: 12px;
+    padding: 24px; border: 1px solid rgba(255,255,255,0.05);
+    min-height: 90px;
+  }
+  .sequence-box h3 { font-size: 14px; color: var(--muted); margin-bottom: 12px; letter-spacing: 1px; }
+  .sequence-box .seq {
+    font-size: 28px; letter-spacing: 8px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    color: var(--gold);
+  }
+  .sequence-box .seq span {
+    display: inline-block; transition: all .4s;
+  }
+  .sequence-box .seq span.active {
+    color: var(--orange); transform: scale(1.3);
+    text-shadow: 0 0 20px rgba(255,107,53,0.5);
+  }
+
+  .traversal-btns {
+    display: flex; gap: 12px;
+  }
+  .traversal-btns button {
+    padding: 10px 22px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+    background: var(--surface); color: var(--text);
+    cursor: pointer; font-size: 13px; letter-spacing: 1px;
+    transition: all .3s;
+  }
+  .traversal-btns button:hover { border-color: var(--teal); color: var(--teal); }
+  .traversal-btns button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .traversal-btns button.play-btn {
+    background: var(--teal); color: var(--bg); border: none;
+    font-weight: 600;
+  }
+  .traversal-btns button.play-btn:hover { background: #00cde8; }
+
+  /* ── Compare slide ── */
+  .compare-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    flex: 1;
+  }
+  .compare-card {
+    background: var(--surface); border-radius: 12px;
+    padding: 32px; text-align: center;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .compare-card h3 {
+    font-size: 18px; color: var(--gold); margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+  .compare-card .code {
+    font-size: 22px; font-family: 'Consolas', 'Courier New', monospace;
+    color: var(--teal); letter-spacing: 4px;
+    margin: 16px 0;
+  }
+  .compare-card .hint {
+    font-size: 12px; color: var(--muted); margin-top: 12px;
+    line-height: 1.8;
+  }
+  .compare-card .mnemonic {
+    margin-top: 16px; padding: 10px 16px;
+    background: rgba(255,107,53,0.1); border-radius: 8px;
+    color: var(--orange); font-size: 13px; letter-spacing: 1px;
+  }
+
+  /* ── Summary slide ── */
+  .summary-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1;
+  }
+  .summary-card {
+    background: var(--surface); border-radius: 12px;
+    padding: 28px; border: 1px solid rgba(255,255,255,0.05);
+  }
+  .summary-card h3 {
+    font-size: 16px; color: var(--gold); margin-bottom: 14px;
+    letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding-bottom: 10px;
+  }
+  .summary-card ul {
+    list-style: none; color: var(--muted); line-height: 2.2;
+    font-size: 14px;
+  }
+  .summary-card ul li::before {
+    content: '▸'; color: var(--teal); margin-right: 8px;
+  }
+
+  /* ── node tooltip / label ── */
+  .traversal-label {
+    font-size: 12px; fill: var(--muted);
+  }
+
+  /* ── step indicator on tree nodes ── */
+  .step-marker {
+    font-size: 10px; fill: var(--bg); font-weight: 700;
+  }
+
+  /* ── keyboard hint ── */
+  @keyframes pulse { 50% { opacity: 0.5; } }
+  .nav-hint { animation: pulse 2s ease infinite; }
+
+  @media (max-width: 1024px) {
+    .slide { padding: 24px 28px; }
+    .traversal-layout { flex-direction: column; gap: 20px; }
+    .traversal-layout .tree-panel { flex: 0 0 auto; }
+    .concept-grid { grid-template-columns: 1fr; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .content-slide h2 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ═══ SLIDE 1: COVER ═══ -->
+  <div class="slide cover active" data-index="0">
+    <img class="book-cover" src="pdf_pages/教材原图/封面.png" alt="教材封面">
+    <h1>二叉树及其遍历</h1>
+    <div class="meta">
+      人教版《信息技术 选择性必修1》<br>
+      <strong>§3.5 二叉树</strong> · 第95—103页
+    </div>
+    <div class="teacher">授课人：张林</div>
+  </div>
+
+  <!-- ═══ SLIDE 2: TREE CONCEPTS ═══ -->
+  <div class="slide content-slide" data-index="1">
+    <h2>从"行当分支"到树形结构</h2>
+    <div class="subtitle">教材 §3.5.1 二叉树的概念</div>
+    <div class="concept-grid">
+      <div class="card">
+        <h3>🌳 生活中的树形结构</h3>
+        <p>
+          族谱、公司组织架构、计算机文件目录、网页DOM树……<br><br>
+          它们都不是线性的"一对一"关系，而是<strong style="color:var(--teal)">分支的、层次的</strong>关系 — 这就是树形结构。
+        </p>
+        <svg viewBox="0 0 380 160" width="100%" height="140">
+          <line x1="190" y1="20" x2="100" y2="80" stroke="#334155" stroke-width="2"/>
+          <line x1="190" y1="20" x2="280" y2="80" stroke="#334155" stroke-width="2"/>
+          <line x1="100" y1="80" x2="40" y2="140" stroke="#334155" stroke-width="2"/>
+          <line x1="100" y1="80" x2="160" y2="140" stroke="#334155" stroke-width="2"/>
+          <line x1="280" y1="80" x2="240" y2="140" stroke="#334155" stroke-width="2"/>
+          <line x1="280" y1="80" x2="320" y2="140" stroke="#334155" stroke-width="2"/>
+          <circle cx="190" cy="20" r="14" fill="var(--teal)"/><text x="190" y="22" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">根</text>
+          <circle cx="100" cy="80" r="12" fill="var(--blue)"/><text x="100" y="83" text-anchor="middle" fill="var(--text)" font-size="9">B</text>
+          <circle cx="280" cy="80" r="12" fill="var(--blue)"/><text x="280" y="83" text-anchor="middle" fill="var(--text)" font-size="9">C</text>
+          <circle cx="40" cy="140" r="10" fill="#1e3a5f"/><text x="40" y="143" text-anchor="middle" fill="var(--muted)" font-size="8">D</text>
+          <circle cx="160" cy="140" r="10" fill="#1e3a5f"/><text x="160" y="143" text-anchor="middle" fill="var(--muted)" font-size="8">E</text>
+          <circle cx="240" cy="140" r="10" fill="#1e3a5f"/><text x="240" y="143" text-anchor="middle" fill="var(--muted)" font-size="8">F</text>
+          <circle cx="320" cy="140" r="10" fill="#1e3a5f"/><text x="320" y="143" text-anchor="middle" fill="var(--muted)" font-size="8">G</text>
+        </svg>
+      </div>
+      <div class="card">
+        <h3>📐 基本术语速览</h3>
+        <p>
+          <span style="color:var(--teal)">节点</span> — 树中的每个数据元素<br>
+          <span style="color:var(--teal)">度</span> — 节点的子树个数，树的最大度即"树的度"<br>
+          <span style="color:var(--gold)">根节点</span> — 最顶层，唯一没有双亲的节点<br>
+          <span style="color:var(--green)">叶节点</span> — 度为0，没有子树的终端节点<br>
+          <span style="color:var(--teal)">深度</span> — 节点的最大层次数<br>
+          <span style="color:var(--purple)">双亲/孩子/兄弟</span> — 节点间的关系
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 3: BINARY TREE DEFINITION ═══ -->
+  <div class="slide content-slide" data-index="2">
+    <h2>二叉树：度≤2的有序树</h2>
+    <div class="subtitle">每个节点最多两棵子树，左右次序不可颠倒</div>
+    <div class="concept-grid">
+      <div class="card">
+        <h3>四种基本形态</h3>
+        <div style="display:flex;gap:20px;align-items:center;justify-content:center;margin-top:8px;">
+          <div style="text-align:center">
+            <svg viewBox="0 0 60 80" width="60" height="80"><circle cx="30" cy="20" r="12" fill="var(--teal)"/><text x="30" y="23" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">A</text></svg>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">(a) 仅根</div>
+          </div>
+          <div style="text-align:center">
+            <svg viewBox="0 0 60 80" width="60" height="80"><circle cx="30" cy="20" r="12" fill="var(--teal)"/><text x="30" y="23" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">A</text><line x1="28" y1="30" x2="20" y2="60" stroke="#475569" stroke-width="2"/><rect x="4" y="55" width="32" height="22" rx="3" fill="none" stroke="#475569" stroke-dasharray="3"/><text x="20" y="70" text-anchor="middle" fill="var(--muted)" font-size="7">左子树</text></svg>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">(b) 左子树</div>
+          </div>
+          <div style="text-align:center">
+            <svg viewBox="0 0 60 80" width="60" height="80"><circle cx="30" cy="20" r="12" fill="var(--teal)"/><text x="30" y="23" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">A</text><line x1="32" y1="30" x2="40" y2="60" stroke="#475569" stroke-width="2"/><rect x="24" y="55" width="32" height="22" rx="3" fill="none" stroke="#475569" stroke-dasharray="3"/><text x="40" y="70" text-anchor="middle" fill="var(--muted)" font-size="7">右子树</text></svg>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">(c) 右子树</div>
+          </div>
+          <div style="text-align:center">
+            <svg viewBox="0 0 60 80" width="60" height="80"><circle cx="30" cy="20" r="12" fill="var(--teal)"/><text x="30" y="23" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">A</text><line x1="26" y1="30" x2="16" y2="60" stroke="#475569" stroke-width="2"/><line x1="34" y1="30" x2="44" y2="60" stroke="#475569" stroke-width="2"/><rect x="0" y="55" width="28" height="22" rx="3" fill="none" stroke="#475569" stroke-dasharray="3"/><rect x="32" y="55" width="28" height="22" rx="3" fill="none" stroke="#475569" stroke-dasharray="3"/><text x="14" y="70" text-anchor="middle" fill="var(--muted)" font-size="7">左子树</text><text x="46" y="70" text-anchor="middle" fill="var(--muted)" font-size="7">右子树</text></svg>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">(d) 双子树</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>满二叉树 vs 完全二叉树</h3>
+        <div style="display:flex;gap:24px;align-items:center;justify-content:center;margin-top:8px;">
+          <div style="text-align:center">
+            <svg viewBox="0 0 140 90" width="140" height="90">
+              <circle cx="70" cy="12" r="11" fill="var(--teal)"/><text x="70" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">1</text>
+              <line x1="66" y1="22" x2="37" y2="55" stroke="#475569" stroke-width="1.5"/><line x1="74" y1="22" x2="103" y2="55" stroke="#475569" stroke-width="1.5"/>
+              <circle cx="34" cy="62" r="11" fill="var(--blue)"/><text x="34" y="65" text-anchor="middle" fill="var(--text)" font-size="10">2</text>
+              <circle cx="106" cy="62" r="11" fill="var(--blue)"/><text x="106" y="65" text-anchor="middle" fill="var(--text)" font-size="10">3</text>
+              <line x1="30" y1="70" x2="17" y2="85" stroke="#475569" stroke-width="1.5"/><line x1="38" y1="70" x2="51" y2="85" stroke="#475569" stroke-width="1.5"/>
+              <line x1="102" y1="70" x2="89" y2="85" stroke="#475569" stroke-width="1.5"/><line x1="110" y1="70" x2="123" y2="85" stroke="#475569" stroke-width="1.5"/>
+              <circle cx="17" cy="88" r="9" fill="#1e3a5f"/><text x="17" y="91" text-anchor="middle" fill="var(--muted)" font-size="8">4</text>
+              <circle cx="51" cy="88" r="9" fill="#1e3a5f"/><text x="51" y="91" text-anchor="middle" fill="var(--muted)" font-size="8">5</text>
+              <circle cx="89" cy="88" r="9" fill="#1e3a5f"/><text x="89" y="91" text-anchor="middle" fill="var(--muted)" font-size="8">6</text>
+              <circle cx="123" cy="88" r="9" fill="#1e3a5f"/><text x="123" y="91" text-anchor="middle" fill="var(--muted)" font-size="8">7</text>
+            </svg>
+            <div style="font-size:11px;color:var(--muted);">满二叉树</div>
+          </div>
+          <div style="font-size:24px;color:var(--muted)">→</div>
+          <div style="text-align:center">
+            <svg viewBox="0 0 140 90" width="140" height="90">
+              <circle cx="70" cy="12" r="11" fill="var(--teal)"/><text x="70" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">1</text>
+              <line x1="66" y1="22" x2="37" y2="55" stroke="#475569" stroke-width="1.5"/><line x1="74" y1="22" x2="103" y2="55" stroke="#475569" stroke-width="1.5"/>
+              <circle cx="34" cy="62" r="11" fill="var(--blue)"/><text x="34" y="65" text-anchor="middle" fill="var(--text)" font-size="10">2</text>
+              <circle cx="106" cy="62" r="11" fill="var(--blue)"/><text x="106" y="65" text-anchor="middle" fill="var(--text)" font-size="10">3</text>
+              <line x1="30" y1="70" x2="17" y2="85" stroke="#475569" stroke-width="1.5"/><line x1="38" y1="70" x2="51" y2="85" stroke="#475569" stroke-width="1.5"/>
+              <line x1="102" y1="70" x2="89" y2="85" stroke="#475569" stroke-width="1.5"/>
+              <circle cx="17" cy="88" r="9" fill="#1e3a5f"/><text x="17" y="91" text-anchor="middle" fill="var(--muted)" font-size="8">4</text>
+              <circle cx="51" cy="88" r="9" fill="#1e3a5f"/><text x="51" y="91" text-anchor="middle" fill="var(--muted)" font-size="8">5</text>
+              <circle cx="89" cy="88" r="9" fill="#1e3a5f"/><text x="89" y="91" text-anchor="middle" fill="var(--muted)" font-size="8">6</text>
+            </svg>
+            <div style="font-size:11px;color:var(--muted);">完全二叉树<br>(删除节点7)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 4: PRE-ORDER ═══ -->
+  <div class="slide content-slide" data-index="3">
+    <h2>先根序遍历 · 根左右</h2>
+    <div class="subtitle">访问根 → 遍历左子树 → 遍历右子树</div>
+    <div class="traversal-layout">
+      <div class="tree-panel">
+        <svg id="tree-pre" viewBox="0 0 420 360" width="420" height="360">
+          <!-- edges -->
+          <line x1="210" y1="45" x2="120" y2="145" stroke="#475569" stroke-width="2.5" id="e-pre-root-l"/>
+          <line x1="210" y1="45" x2="300" y2="145" stroke="#475569" stroke-width="2.5" id="e-pre-root-r"/>
+          <line x1="120" y1="145" x2="50" y2="265" stroke="#475569" stroke-width="2.5" id="e-pre-plus-l"/>
+          <line x1="120" y1="145" x2="175" y2="265" stroke="#475569" stroke-width="2.5" id="e-pre-plus-r"/>
+          <line x1="300" y1="145" x2="240" y2="265" stroke="#475569" stroke-width="2.5" id="e-pre-div-l"/>
+          <line x1="300" y1="145" x2="355" y2="265" stroke="#475569" stroke-width="2.5" id="e-pre-div-r"/>
+          <!-- nodes -->
+          <g id="node-pre-root"><circle cx="210" cy="40" r="24" fill="var(--surface)" stroke="var(--teal)" stroke-width="3"/><text x="210" y="46" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="700">*</text></g>
+          <g id="node-pre-plus"><circle cx="120" cy="140" r="22" fill="var(--surface)" stroke="var(--blue)" stroke-width="2"/><text x="120" y="146" text-anchor="middle" fill="var(--text)" font-size="16">+</text></g>
+          <g id="node-pre-div"><circle cx="300" cy="140" r="22" fill="var(--surface)" stroke="var(--blue)" stroke-width="2"/><text x="300" y="146" text-anchor="middle" fill="var(--text)" font-size="16">/</text></g>
+          <g id="node-pre-a"><circle cx="50" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="50" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">a</text></g>
+          <g id="node-pre-b"><circle cx="175" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="175" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">b</text></g>
+          <g id="node-pre-c"><circle cx="240" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="240" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">c</text></g>
+          <g id="node-pre-d"><circle cx="355" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="355" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">d</text></g>
+        </svg>
+      </div>
+      <div class="info-panel">
+        <div class="algo-steps">
+          <h3>算法步骤</h3>
+          <ol>
+            <li id="pre-step-1">若二叉树为空，则空操作返回</li>
+            <li id="pre-step-2">否则：① <strong>访问根节点</strong></li>
+            <li id="pre-step-3">② 先根序遍历<strong>左子树</strong></li>
+            <li id="pre-step-4">③ 先根序遍历<strong>右子树</strong></li>
+          </ol>
+        </div>
+        <div class="sequence-box">
+          <h3>遍历序列</h3>
+          <div class="seq" id="pre-seq">
+            <span>*</span> <span>+</span> <span>a</span> <span>b</span> <span>/</span> <span>c</span> <span>d</span>
+          </div>
+        </div>
+        <div class="traversal-btns">
+          <button class="play-btn" onclick="runTraversal('pre')">▶ 自动演示</button>
+          <button id="pre-step-btn" onclick="stepTraversal('pre')">⏭ 逐步</button>
+          <button onclick="resetTraversal('pre')">↺ 重置</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 5: IN-ORDER ═══ -->
+  <div class="slide content-slide" data-index="4">
+    <h2>中根序遍历 · 左根右</h2>
+    <div class="subtitle">遍历左子树 → 访问根 → 遍历右子树</div>
+    <div class="traversal-layout">
+      <div class="tree-panel">
+        <svg id="tree-in" viewBox="0 0 420 360" width="420" height="360">
+          <line x1="210" y1="45" x2="120" y2="145" stroke="#475569" stroke-width="2.5"/>
+          <line x1="210" y1="45" x2="300" y2="145" stroke="#475569" stroke-width="2.5"/>
+          <line x1="120" y1="145" x2="50" y2="265" stroke="#475569" stroke-width="2.5"/>
+          <line x1="120" y1="145" x2="175" y2="265" stroke="#475569" stroke-width="2.5"/>
+          <line x1="300" y1="145" x2="240" y2="265" stroke="#475569" stroke-width="2.5"/>
+          <line x1="300" y1="145" x2="355" y2="265" stroke="#475569" stroke-width="2.5"/>
+          <g id="node-in-root"><circle cx="210" cy="40" r="24" fill="var(--surface)" stroke="var(--teal)" stroke-width="3"/><text x="210" y="46" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="700">*</text></g>
+          <g id="node-in-plus"><circle cx="120" cy="140" r="22" fill="var(--surface)" stroke="var(--blue)" stroke-width="2"/><text x="120" y="146" text-anchor="middle" fill="var(--text)" font-size="16">+</text></g>
+          <g id="node-in-div"><circle cx="300" cy="140" r="22" fill="var(--surface)" stroke="var(--blue)" stroke-width="2"/><text x="300" y="146" text-anchor="middle" fill="var(--text)" font-size="16">/</text></g>
+          <g id="node-in-a"><circle cx="50" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="50" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">a</text></g>
+          <g id="node-in-b"><circle cx="175" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="175" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">b</text></g>
+          <g id="node-in-c"><circle cx="240" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="240" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">c</text></g>
+          <g id="node-in-d"><circle cx="355" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="355" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">d</text></g>
+        </svg>
+      </div>
+      <div class="info-panel">
+        <div class="algo-steps">
+          <h3>算法步骤</h3>
+          <ol>
+            <li id="in-step-1">若二叉树为空，则空操作返回</li>
+            <li id="in-step-2">否则：① 中根序遍历<strong>左子树</strong></li>
+            <li id="in-step-3">② <strong>访问根节点</strong></li>
+            <li id="in-step-4">③ 中根序遍历<strong>右子树</strong></li>
+          </ol>
+        </div>
+        <div class="sequence-box">
+          <h3>遍历序列</h3>
+          <div class="seq" id="in-seq">
+            <span>a</span> <span>+</span> <span>b</span> <span>*</span> <span>c</span> <span>/</span> <span>d</span>
+          </div>
+        </div>
+        <div class="traversal-btns">
+          <button class="play-btn" onclick="runTraversal('in')">▶ 自动演示</button>
+          <button id="in-step-btn" onclick="stepTraversal('in')">⏭ 逐步</button>
+          <button onclick="resetTraversal('in')">↺ 重置</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 6: POST-ORDER ═══ -->
+  <div class="slide content-slide" data-index="5">
+    <h2>后根序遍历 · 左右根</h2>
+    <div class="subtitle">遍历左子树 → 遍历右子树 → 访问根</div>
+    <div class="traversal-layout">
+      <div class="tree-panel">
+        <svg id="tree-post" viewBox="0 0 420 360" width="420" height="360">
+          <line x1="210" y1="45" x2="120" y2="145" stroke="#475569" stroke-width="2.5"/>
+          <line x1="210" y1="45" x2="300" y2="145" stroke="#475569" stroke-width="2.5"/>
+          <line x1="120" y1="145" x2="50" y2="265" stroke="#475569" stroke-width="2.5"/>
+          <line x1="120" y1="145" x2="175" y2="265" stroke="#475569" stroke-width="2.5"/>
+          <line x1="300" y1="145" x2="240" y2="265" stroke="#475569" stroke-width="2.5"/>
+          <line x1="300" y1="145" x2="355" y2="265" stroke="#475569" stroke-width="2.5"/>
+          <g id="node-post-root"><circle cx="210" cy="40" r="24" fill="var(--surface)" stroke="var(--teal)" stroke-width="3"/><text x="210" y="46" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="700">*</text></g>
+          <g id="node-post-plus"><circle cx="120" cy="140" r="22" fill="var(--surface)" stroke="var(--blue)" stroke-width="2"/><text x="120" y="146" text-anchor="middle" fill="var(--text)" font-size="16">+</text></g>
+          <g id="node-post-div"><circle cx="300" cy="140" r="22" fill="var(--surface)" stroke="var(--blue)" stroke-width="2"/><text x="300" y="146" text-anchor="middle" fill="var(--text)" font-size="16">/</text></g>
+          <g id="node-post-a"><circle cx="50" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="50" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">a</text></g>
+          <g id="node-post-b"><circle cx="175" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="175" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">b</text></g>
+          <g id="node-post-c"><circle cx="240" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="240" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">c</text></g>
+          <g id="node-post-d"><circle cx="355" cy="260" r="19" fill="var(--surface)" stroke="#334155" stroke-width="2"/><text x="355" y="265" text-anchor="middle" fill="var(--muted)" font-size="15">d</text></g>
+        </svg>
+      </div>
+      <div class="info-panel">
+        <div class="algo-steps">
+          <h3>算法步骤</h3>
+          <ol>
+            <li id="post-step-1">若二叉树为空，则空操作返回</li>
+            <li id="post-step-2">否则：① 后根序遍历<strong>左子树</strong></li>
+            <li id="post-step-3">② 后根序遍历<strong>右子树</strong></li>
+            <li id="post-step-4">③ <strong>访问根节点</strong></li>
+          </ol>
+        </div>
+        <div class="sequence-box">
+          <h3>遍历序列 · 后缀表达式（逆波兰式）</h3>
+          <div class="seq" id="post-seq">
+            <span>a</span> <span>b</span> <span>+</span> <span>c</span> <span>d</span> <span>/</span> <span>*</span>
+          </div>
+        </div>
+        <div class="traversal-btns">
+          <button class="play-btn" onclick="runTraversal('post')">▶ 自动演示</button>
+          <button id="post-step-btn" onclick="stepTraversal('post')">⏭ 逐步</button>
+          <button onclick="resetTraversal('post')">↺ 重置</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 7: COMPARISON ═══ -->
+  <div class="slide content-slide" data-index="6">
+    <h2>三种遍历 · 对比总结</h2>
+    <div class="subtitle">同一棵树，不同的访问次序，不同的应用场景</div>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h3>🔵 先根序</h3>
+        <div style="font-size:13px;color:var(--teal);letter-spacing:2px;">根 → 左 → 右</div>
+        <div class="code">* + a b / c d</div>
+        <div class="hint">前缀表达式（波兰式）<br>用于：复制树结构、表达式解析</div>
+        <div class="mnemonic">口诀：<strong>遇根就访问</strong></div>
+      </div>
+      <div class="compare-card">
+        <h3>🟡 中根序</h3>
+        <div style="font-size:13px;color:var(--gold);letter-spacing:2px;">左 → 根 → 右</div>
+        <div class="code">a + b * c / d</div>
+        <div class="hint">中缀表达式<br>就是我们日常书写的算式！</div>
+        <div class="mnemonic">口诀：<strong>左完再取根</strong></div>
+      </div>
+      <div class="compare-card">
+        <h3>🟠 后根序</h3>
+        <div style="font-size:13px;color:var(--orange);letter-spacing:2px;">左 → 右 → 根</div>
+        <div class="code">a b + c d / *</div>
+        <div class="hint">后缀表达式（逆波兰式）<br>计算机求值表达式就用这个！</div>
+        <div class="mnemonic">口诀：<strong>左右走完再拿根</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 8: SUMMARY ═══ -->
+  <div class="slide content-slide" data-index="7">
+    <h2>课堂小结</h2>
+    <div class="subtitle">§3.5 二叉树 · 核心回顾</div>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <h3>📖 概念回顾</h3>
+        <ul>
+          <li>二叉树：度 ≤ 2 的有序树</li>
+          <li>节点的度、树的度、深度</li>
+          <li>根节点、叶节点、内部节点</li>
+          <li>满二叉树 → 完全二叉树</li>
+          <li>四种基本形态</li>
+        </ul>
+      </div>
+      <div class="summary-card">
+        <h3>🔄 三种遍历</h3>
+        <ul>
+          <li>先根序：根左右 → 前缀表达式</li>
+          <li>中根序：左根右 → 中缀表达式</li>
+          <li>后根序：左右根 → 后缀表达式</li>
+          <li>递归思想贯穿始终</li>
+          <li>遍历是二叉树操作的基础</li>
+        </ul>
+      </div>
+      <div class="summary-card">
+        <h3>🎯 课后练习</h3>
+        <ul>
+          <li>教材 P.103 练习提升 第1-2题</li>
+          <li>画出3个节点的所有二叉树形态</li>
+          <li>动物园馆舍遍历问题（P.102）</li>
+        </ul>
+      </div>
+      <div class="summary-card">
+        <h3>💡 思考</h3>
+        <ul>
+          <li>二叉树为什么能高效组织数据？</li>
+          <li>三种遍历各自适用于什么场景？</li>
+          <li>如果二叉树深度很大，递归遍历会有什么问题？</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── navigation ── -->
+<div class="nav-hint">← → 方向键翻页  ·  共 8 页</div>
+<div class="slide-nav" id="slide-nav"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+  // ═══════════ SLIDE NAVIGATION ═══════════
+  let currentSlide = 0;
+  const totalSlides = 8;
+  const slides = document.querySelectorAll('.slide');
+  const navContainer = document.getElementById('slide-nav');
+
+  // build dots
+  for (let i = 0; i < totalSlides; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goToSlide(i));
+    navContainer.appendChild(dot);
+  }
+
+  function goToSlide(idx) {
+    if (idx < 0 || idx >= totalSlides) return;
+    slides[currentSlide].classList.remove('active');
+    slides[idx].classList.add('active');
+    currentSlide = idx;
+    // update dots
+    const dots = navContainer.querySelectorAll('.dot');
+    dots.forEach((d, i) => {
+      d.classList.remove('active', 'done');
+      if (i === idx) d.classList.add('active');
+      else if (i < idx) d.classList.add('done');
+    });
+    // if arriving at traversal slides, reset them
+    if (idx >= 3 && idx <= 5) {
+      const types = ['pre', 'in', 'post'];
+      resetTraversal(types[idx - 3]);
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goToSlide(currentSlide + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goToSlide(currentSlide - 1);
+  });
+
+  // ═══════════ TRAVERSAL LOGIC ═══════════
+  // Node IDs for each traversal type
+  const nodeIds = {
+    pre: ['node-pre-root', 'node-pre-plus', 'node-pre-a', 'node-pre-b', 'node-pre-div', 'node-pre-c', 'node-pre-d'],
+    in:  ['node-in-a', 'node-in-plus', 'node-in-b', 'node-in-root', 'node-in-c', 'node-in-div', 'node-in-d'],
+    post: ['node-post-a', 'node-post-b', 'node-post-plus', 'node-post-c', 'node-post-d', 'node-post-div', 'node-post-root'],
+  };
+
+  const seqIds = {
+    pre: 'pre-seq',
+    in: 'in-seq',
+    post: 'post-seq',
+  };
+
+  // traversal state
+  const state = {
+    pre: { step: -1, running: false },
+    in: { step: -1, running: false },
+    post: { step: -1, running: false },
+  };
+
+  const colors = {
+    pre: ['#ff6b35', '#e8b86d', '#22c55e', '#22c55e', '#00b4d8', '#22c55e', '#22c55e'],
+    in:  ['#22c55e', '#e8b86d', '#22c55e', '#ff6b35', '#22c55e', '#00b4d8', '#22c55e'],
+    post: ['#22c55e', '#22c55e', '#e8b86d', '#22c55e', '#22c55e', '#00b4d8', '#ff6b35'],
+  };
+
+  function highlightNode(type, index) {
+    if (index < 0 || index >= nodeIds[type].length) return;
+    const nodeId = nodeIds[type][index];
+    const el = document.getElementById(nodeId);
+    if (!el) return;
+
+    // animate node — fill with orange, pulse
+    const circle = el.querySelector('circle');
+    const text = el.querySelector('text');
+    gsap.to(circle, {
+      fill: '#ff6b35', stroke: '#ff6b35',
+      duration: 0.35, ease: 'power2.out',
+    });
+    gsap.to(text, { fill: '#ffffff', duration: 0.35 });
+    // scale pulse
+    gsap.fromTo(el, { scale: 1 }, { scale: 1.2, duration: 0.35, ease: 'back.out(3)' });
+    gsap.to(el, { scale: 1, duration: 0.3, delay: 0.35, ease: 'power2.in' });
+
+    // add step number badge
+    const existingBadge = el.querySelector('.badge');
+    if (!existingBadge) {
+      const badge = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      badge.setAttribute('cx', circle.getAttribute('cx'));
+      badge.setAttribute('cy', parseFloat(circle.getAttribute('cy')) - parseFloat(circle.getAttribute('r')) + 4);
+      badge.setAttribute('r', '10');
+      badge.setAttribute('fill', '#0a0e1a');
+      badge.setAttribute('stroke', '#ff6b35');
+      badge.setAttribute('stroke-width', '1.5');
+      badge.classList.add('badge');
+      const badgeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      badgeText.setAttribute('x', badge.getAttribute('cx'));
+      badgeText.setAttribute('y', parseFloat(badge.getAttribute('cy')) + 4);
+      badgeText.setAttribute('text-anchor', 'middle');
+      badgeText.setAttribute('fill', '#ff6b35');
+      badgeText.setAttribute('font-size', '9');
+      badgeText.setAttribute('font-weight', '700');
+      badgeText.textContent = index + 1;
+      badgeText.classList.add('badge');
+      el.appendChild(badge);
+      el.appendChild(badgeText);
+      gsap.from([badge, badgeText], { opacity: 0, scale: 0, duration: 0.3, ease: 'back.out(2)' });
+    }
+  }
+
+  function unhighlightNode(type, index) {
+    if (index < 0 || index >= nodeIds[type].length) return;
+    const nodeId = nodeIds[type][index];
+    const el = document.getElementById(nodeId);
+    if (!el) return;
+    const circle = el.querySelector('circle');
+    const text = el.querySelector('text');
+    // reset to original style — keep visited style (dimmer orange)
+    gsap.to(circle, {
+      fill: 'rgba(255,107,53,0.12)', stroke: '#ff6b35',
+      duration: 0.4,
+    });
+    gsap.to(text, { fill: '#ffffff', duration: 0.4 });
+  }
+
+  function highlightSequenceEl(type, index) {
+    const seqEl = document.getElementById(seqIds[type]);
+    if (!seqEl) return;
+    const spans = seqEl.querySelectorAll('span');
+    spans.forEach((s, i) => {
+      if (i === index) s.classList.add('active');
+      else if (i < index) s.style.color = 'rgba(232,184,109,0.3)';
+    });
+  }
+
+  function resetTraversal(type) {
+    // stop any running animation
+    if (state[type].running) return;
+    state[type].step = -1;
+
+    // reset all nodes
+    nodeIds[type].forEach((nid, i) => {
+      const el = document.getElementById(nid);
+      if (!el) return;
+      const circle = el.querySelector('circle');
+      const text = el.querySelector('text');
+      const origStroke = i === (type === 'pre' ? 0 : type === 'in' ? 3 : 6) ? 'var(--teal)' :
+                         (['plus', 'div'].some(t => nid.includes(t))) ? 'var(--blue)' : '#334155';
+      gsap.to(circle, { fill: 'var(--surface)', stroke: origStroke, duration: 0.4 });
+      gsap.to(text, { fill: i === (type === 'pre' ? 0 : type === 'in' ? 3 : 6) ? 'var(--text)' : 'var(--muted)', duration: 0.4 });
+      gsap.to(el, { scale: 1, duration: 0.3 });
+      // remove badges
+      el.querySelectorAll('.badge').forEach(b => b.remove());
+    });
+
+    // reset sequence
+    const seqEl = document.getElementById(seqIds[type]);
+    if (seqEl) {
+      seqEl.querySelectorAll('span').forEach(s => {
+        s.classList.remove('active');
+        s.style.color = '';
+      });
+    }
+
+    // reset step highlights
+    const stepPrefix = type + '-step-';
+    for (let i = 1; i <= 4; i++) {
+      const stepEl = document.getElementById(stepPrefix + i);
+      if (stepEl) stepEl.classList.remove('highlight');
+    }
+  }
+
+  // ═══════ STEP / AUTO ═══════
+  function stepTraversal(type) {
+    if (state[type].running) return;
+    const nextStep = state[type].step + 1;
+    if (nextStep >= 7) return; // all done
+
+    state[type].step = nextStep;
+
+    // highlight the algorithm step
+    const stepMap = {
+      pre: { 0: 2, 1: 2, 2: 2, 3: 3, 4: 2, 5: 4, 6: 4 },
+      in:  { 0: 2, 1: 2, 2: 3, 3: 3, 4: 2, 5: 4, 6: 4 },
+      post:{ 0: 2, 1: 2, 2: 2, 3: 3, 4: 3, 5: 3, 6: 4 },
+    };
+    const stepPrefix = type + '-step-';
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById(stepPrefix + i);
+      if (el) el.classList.remove('highlight');
+    }
+    const activeStep = document.getElementById(stepPrefix + stepMap[type][nextStep]);
+    if (activeStep) activeStep.classList.add('highlight');
+
+    // unhighlight previous node
+    if (nextStep > 0) unhighlightNode(type, nextStep - 1);
+
+    // highlight current node
+    highlightNode(type, nextStep);
+
+    // highlight sequence
+    highlightSequenceEl(type, nextStep);
+
+    // disable step button if done
+    if (nextStep >= 6) {
+      const btn = document.getElementById(type + '-step-btn');
+      if (btn) btn.disabled = true;
+    }
+  }
+
+  function runTraversal(type) {
+    if (state[type].running) return;
+    resetTraversal(type);
+    state[type].running = true;
+    state[type].step = -1;
+
+    const tl = gsap.timeline({
+      onComplete: () => { state[type].running = false; }
+    });
+
+    const stepMap = {
+      pre: { 0: 2, 1: 2, 2: 2, 3: 3, 4: 2, 5: 4, 6: 4 },
+      in:  { 0: 2, 1: 2, 2: 3, 3: 3, 4: 2, 5: 4, 6: 4 },
+      post:{ 0: 2, 1: 2, 2: 2, 3: 3, 4: 3, 5: 3, 6: 4 },
+    };
+    const stepPrefix = type + '-step-';
+
+    for (let i = 0; i < 7; i++) {
+      const idx = i;
+      tl.call(() => {
+        // unhighlight previous
+        if (idx > 0) unhighlightNode(type, idx - 1);
+        // highlight current
+        highlightNode(type, idx);
+        highlightSequenceEl(type, idx);
+        // update algo step
+        for (let s = 1; s <= 4; s++) {
+          const el = document.getElementById(stepPrefix + s);
+          if (el) el.classList.remove('highlight');
+        }
+        const activeStep = document.getElementById(stepPrefix + stepMap[type][idx]);
+        if (activeStep) activeStep.classList.add('highlight');
+      }, null, idx * 0.9);
+
+      // add a small pause at important moments
+      if (idx === 2 || idx === 4 || idx === 6) {
+        tl.call(() => {}, null, 0.3);
+      }
+    }
+
+    tl.call(() => {
+      state[type].step = 6;
+      const btn = document.getElementById(type + '-step-btn');
+      if (btn) btn.disabled = true;
+      const playBtn = document.querySelector(`[onclick="runTraversal('${type}')"]`);
+      if (playBtn) playBtn.textContent = '✓ 完成';
+    });
+  }
+</script>
+
+</body>
+</html>
