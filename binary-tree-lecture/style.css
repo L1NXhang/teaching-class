@@ -12,6 +12,7 @@
 .tpl-course-module .slide{padding:56px 72px;background:var(--bg);display:grid;grid-template-columns:170px 1fr;gap:32px;align-content:start}
 .tpl-course-module .slide.full{grid-template-columns:1fr;display:flex;flex-direction:column;justify-content:center}
 .tpl-course-module .sidebar{border-right:1px solid var(--border);padding-right:18px;position:relative}
+.tpl-course-module .sidebar::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:0 3px 3px 0;background:linear-gradient(180deg,var(--accent),var(--accent-2) 50%,var(--accent-3));opacity:.35}
 .tpl-course-module .sidebar .brand{font-family:'Playfair Display','Noto Serif SC',serif;font-size:17px;font-weight:700;color:var(--accent)}
 .tpl-course-module .sidebar .brand::before{content:"✦ ";color:var(--accent-2)}
 .tpl-course-module .sidebar h5{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-3);margin:20px 0 8px}
@@ -29,7 +30,8 @@
 .tpl-course-module .lede{font-size:18px;color:var(--text-2);line-height:1.7}
 .tpl-course-module .callout{border-left:4px solid var(--accent-2);background:var(--surface-2);padding:18px 22px;border-radius:0 var(--radius) var(--radius) 0;margin-top:20px}
 .tpl-course-module .callout b{color:var(--accent-2)}
-.tpl-course-module .concept-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow)}
+.tpl-course-module .concept-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.tpl-course-module .concept-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--accent-3));opacity:.5;border-radius:var(--radius) var(--radius) 0 0}
 .tpl-course-module .concept-box h4{margin-top:0;color:var(--accent)}
 .tpl-course-module .exercise{background:#fffbeb;border:1.5px dashed var(--accent-2);border-radius:var(--radius);padding:22px 26px}
 .tpl-course-module .exercise::before{content:"✎ 动手练习";display:block;font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--accent-2);margin-bottom:10px}
@@ -47,7 +49,8 @@
 .tpl-course-module .mcq.reveal-correct .feedback,.tpl-course-module .mcq.reveal-wrong .feedback{display:block}
 .tpl-course-module .pill-academic{display:inline-block;padding:4px 12px;border-radius:4px;background:var(--surface-2);border:1px solid var(--border);font-size:12px;color:var(--text-2);font-family:'JetBrains Mono',monospace}
 .tpl-course-module .slide.full .h1{font-size:76px}
-.tpl-course-module .deck-footer{color:var(--text-3)}
+.tpl-course-module .deck-footer{color:var(--text-3);position:relative;margin-top:auto;padding-top:12px}
+.tpl-course-module .deck-footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border-strong) 20%,var(--border-strong) 80%,transparent)}
 
 /* ── Tree visualization panel ── */
 .tree-viz{display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;min-height:260px;position:relative}
@@ -108,4 +111,77 @@
   .tpl-course-module .h1{font-size:36px}
   .tpl-course-module .h2{font-size:26px}
   .zoo-grid{grid-template-columns:1fr}
+  .trav-compare-cards{grid-template-columns:1fr !important}
+  .time-alloc-table .ta-label{font-size:11px}
 }
+
+/* ── Cover tree animation ── */
+.cover-tree{margin:8px 0 16px}
+.cover-tree .cover-node{opacity:0;animation:coverFadeIn .5s ease-out forwards}
+.cover-tree .cover-edge{opacity:0;animation:coverFadeIn .4s ease-out forwards}
+@keyframes coverFadeIn{0%{opacity:0;transform:scale(.7)}100%{opacity:1;transform:scale(1)}}
+
+/* ── Time allocation progress bars ── */
+.time-alloc-table{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.ta-row{display:flex;align-items:center;gap:14px}
+.ta-label{flex:none;width:110px;font-size:13px;font-weight:600;color:var(--text-2);text-align:right}
+.ta-bar-wrap{flex:1;background:var(--surface-2);border-radius:8px;height:28px;overflow:hidden;position:relative}
+.ta-bar{height:100%;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;min-width:50px;transition:width .8s ease}
+.ta-bar-1{background:linear-gradient(90deg,#93c5fd,#3b82f6)}
+.ta-bar-2{background:linear-gradient(90deg,#60a5fa,#2563eb)}
+.ta-bar-3{background:linear-gradient(90deg,#2563eb,#1d4ed8)}
+.ta-bar-4{background:linear-gradient(90deg,#fbbf24,#d97706)}
+.ta-bar-5{background:linear-gradient(90deg,#34d399,#059669)}
+.ta-bar-6{background:linear-gradient(90deg,#fb923c,#ea580c)}
+
+/* ── Discussion timer ── */
+#disc-timer-display{transition:color .3s}
+#disc-timer-display.warning{color:var(--accent-2) !important;animation:pulse .5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── Answer reveal ── */
+.ans-btn{padding:8px 18px;border-radius:6px;border:1.5px solid var(--accent);background:var(--surface);color:var(--accent);cursor:pointer;font-size:13px;font-weight:600;margin-top:8px;transition:all .2s}
+.ans-btn:hover{background:var(--accent);color:#fff}
+.ans-btn.revealed{border-color:var(--accent-3);color:var(--accent-3);background:var(--surface)}
+.ans-reveal{display:none;margin-top:8px;padding:10px 14px;background:rgba(5,150,105,.08);border-left:3px solid var(--accent-3);border-radius:0 8px 8px 0;font-size:13px;color:var(--text-2);line-height:1.7}
+.ans-reveal.show{display:block;animation:coverFadeIn .3s ease-out}
+
+/* ── Traversal compare cards ── */
+.trav-card{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform .2s}
+.trav-card:hover{transform:translateY(-3px)}
+
+/* ── Mindmap SVG ── */
+.mindmap-svg text{font-family:'Inter','Noto Sans SC',sans-serif}
+
+/* ── Cover slide background enhancement ── */
+.slide[data-title='封面']::before {
+  opacity: 0.7;
+}
+.slide[data-title='封面']::after {
+  opacity: 0.5;
+  background-image:
+    radial-gradient(circle at 20% 25%, rgba(37,99,235,0.12) 0%, rgba(37,99,235,0.12) 80px, transparent 80px),
+    radial-gradient(circle at 80% 75%, rgba(217,119,6,0.10) 0%, rgba(217,119,6,0.10) 100px, transparent 100px),
+    radial-gradient(circle at 50% 50%, rgba(5,150,105,0.05) 0%, rgba(5,150,105,0.05) 140px, transparent 140px);
+  background-size: 100% 100%;
+}
+
+/* ── 说课页 sidebar 高亮当前环节 ── */
+.slide[data-title='说教材与学情'] .obj-list li:nth-child(1),
+.slide[data-title='教学目标与重难点'] .obj-list li:nth-child(2),
+.slide[data-title='教法学法与教学过程'] .obj-list li:nth-child(3),
+.slide[data-title='教学反思与评价'] .obj-list li:nth-child(4) {
+  color: var(--accent-2);
+  font-weight: 700;
+}
+
+/* ── 递归调用栈可视化样式 ── */
+.stack-demo-btn{padding:8px 12px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;font-size:12px;font-weight:600;transition:all .2s;text-align:center}
+.stack-demo-btn:hover{border-color:var(--accent);color:var(--accent)}
+.stack-demo-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.stack-container{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;min-height:320px;display:flex;flex-direction:column;gap:4px;position:relative}
+.stack-container::before{content:'栈底';position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--text-3)}
+.stack-container::after{content:'栈顶';position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--text-3)}
+.stack-label{font-size:13px;font-weight:700;color:var(--accent);text-align:center;margin-bottom:8px;border-bottom:1px dashed var(--border);padding-bottom:4px;margin-top:18px}
+.stack-frame{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:6px 10px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-2);text-align:center;transition:all .3s}
+.stack-frame.highlight{background:rgba(37,99,235,0.1);border-color:var(--accent);color:var(--accent);transform:scale(1.05)}
