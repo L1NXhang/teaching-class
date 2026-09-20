@@ -8,49 +8,53 @@
 <link rel="stylesheet" href="assets/animations/animations.css">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="assets/themes/memphis-pop.css" id="theme-link">
-<style id="speaker-notes-style">
-/* ── 演讲者模式 (按T切换) ── */
-#speaker-panel {
-  position:fixed;bottom:0;left:0;right:0;z-index:9999;
-  background:rgba(15,15,20,0.96);color:#e0e0e0;
-  border-top:3px solid var(--accent);
-  max-height:45vh;overflow-y:auto;
-  padding:20px 28px 24px;
-  font-size:15px;line-height:1.85;
-  transform:translateY(100%);
-  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
-  box-shadow:0 -8px 32px rgba(0,0,0,0.5);
-  backdrop-filter:blur(12px);
+<style id="keyhint-style">
+/* ── 键盘快捷键提示(右下角,8 秒后自动淡出) ── */
+#keyhint {
+  position:fixed;bottom:14px;right:16px;z-index:9998;
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;
+  font-size:11px;color:var(--text-2);
+  background:rgba(255,255,255,.85);
+  backdrop-filter:blur(8px);
+  border:1px solid var(--border);
+  border-radius:18px;padding:6px 12px;
+  box-shadow:0 4px 14px rgba(0,0,0,.06);
+  transition:opacity .6s ease, transform .6s ease;
+  pointer-events:none;
+  max-width:80vw;
 }
-#speaker-panel.show {transform:translateY(0)}
-#speaker-panel .sp-header {
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:12px;padding-bottom:10px;
-  border-bottom:1px solid rgba(255,255,255,0.12);
+#keyhint.faded{opacity:0;transform:translateY(8px)}
+#keyhint kbd{
+  display:inline-block;padding:1px 6px;margin:0 2px;
+  font-family:var(--font-mono);font-size:10px;line-height:1.5;
+  background:var(--surface-2);color:var(--text-1);
+  border:1px solid var(--border-strong);border-radius:3px;
+  box-shadow:0 1px 0 var(--border-strong);
 }
-#speaker-panel .sp-title {font-size:13px;color:var(--accent);font-weight:700;letter-spacing:1px}
-#speaker-panel .sp-slide-label {font-size:14px;color:#fff;font-weight:600}
-#speaker-panel .sp-hint {font-size:12px;color:#888}
-#speaker-panel .sp-script {font-size:16px;line-height:1.9}
-#speaker-panel .sp-board {
-  margin-top:12px;padding:12px 16px;
-  background:rgba(255,255,255,0.05);border-radius:8px;
-  border-left:3px solid var(--accent-2);
-}
-#speaker-panel .sp-board-label {font-size:12px;color:var(--accent-2);font-weight:700;margin-bottom:6px}
-#speaker-panel .sp-board pre {font-family:inherit;font-size:14px;line-height:1.8;margin:0;white-space:pre-wrap;color:#ccc}
-#speaker-panel .sp-empty {color:#666;font-style:italic;text-align:center;padding:20px}
-#speaker-toggle-hint {
-  position:fixed;top:10px;right:16px;z-index:10000;
-  font-size:11px;color:rgba(255,255,255,0.5);
-  background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:4px;
-  pointer-events:none;transition:opacity 0.3s;
-}
-body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,0,0,0.8)}
+#keyhint .sep{color:var(--text-3);margin:0 2px}
+/* 重新悬停或按键时再显示 */
+#keyhint.show{opacity:1;transform:translateY(0)}
 </style>
 </head>
-<body class="tpl-course-module" data-themes="memphis-pop,sunset-warm,engineering-whiteprint,academic-paper" data-theme-base="assets/themes/">
+<body class="tpl-course-module" data-themes="memphis-pop,sunset-warm,engineering-whiteprint,academic-paper,solarized-light" data-theme-base="assets/themes/">
 <div class="deck">
+
+<!-- 键盘快捷键提示(右下角,8 秒后自动淡出,任何按键/移动鼠标可再显示) -->
+<div id="keyhint">
+  <span><kbd>←</kbd><kbd>→</kbd> 翻页</span>
+  <span class="sep">·</span>
+  <span><kbd>S</kbd> 演讲者</span>
+  <span class="sep">·</span>
+  <span><kbd>N</kbd> 逐字稿</span>
+  <span class="sep">·</span>
+  <span><kbd>O</kbd> 总览</span>
+  <span class="sep">·</span>
+  <span><kbd>T</kbd> 主题</span>
+  <span class="sep">·</span>
+  <span><kbd>F</kbd> 全屏</span>
+  <span class="sep">·</span>
+  <span><kbd>?</kbd> 帮助</span>
+</div>
 
 <!-- ════════════════════════════════════════════
      SLIDE 1 — COVER
@@ -84,7 +88,12 @@ body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,
     <div class="obj-chip">🔍 掌握三种遍历算法</div>
     <div class="obj-chip">💡 感受二叉树组织数据的高效性</div>
   </div>
-  <div class="deck-footer"><span>人教版《信息技术 选择性必修1》</span><span class="slide-number" data-current="1" data-total="20"></span></div>
+  <div style="margin-top:20px;font-size:13px;color:var(--text-3);letter-spacing:.04em">
+    <span style="display:inline-block;padding:4px 12px;border:1px solid var(--border-strong);border-radius:4px;background:var(--surface)">
+      授课人：<strong style="color:var(--accent)">张林</strong> · 西华师范大学
+    </span>
+  </div>
+  <div class="deck-footer"><span>人教版《信息技术 选择性必修1》</span><span class="slide-number" data-current="1" data-total="22"></span></div>
 </section>
 
 <!-- ════════════════════════════════════════════
@@ -191,7 +200,7 @@ body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,
     生活中大量数据是<strong style="color:var(--accent)">一对多</strong>的层次结构——族谱、组织架构、文件目录……<br>
     这种分支结构，我们称之为<strong style="color:var(--accent-2)">树形结构</strong>。
   </div>
-  <div class="deck-footer"><span>人教版《信息技术 选择性必修1》· §3.5 二叉树</span><span class="slide-number" data-current="2" data-total="20"></span></div>
+  <div class="deck-footer"><span>人教版《信息技术 选择性必修1》· §3.5 二叉树</span><span class="slide-number" data-current="2" data-total="22"></span></div>
 </section>
 
 <!-- ════════════════════════════════════════════
@@ -811,7 +820,76 @@ body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,
 </section>
 
 <!-- ════════════════════════════════════════════
-     SLIDE 12 — 三种遍历对比
+     SLIDE 12 — 递归调用栈(难点突破)
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="递归调用栈 · 难点突破" data-theme-accent="var(--accent-2)">
+  <aside class="sidebar">
+    <div class="brand">信息技术 · §3.5</div>
+    <h5>学习目标</h5>
+    <ul class="obj-list">
+      <li class="done">认识树形结构与二叉树概念</li>
+      <li class="done">理解二叉树定义与基本形态</li>
+      <li class="done">区分满二叉树与完全二叉树</li>
+      <li class="done">理解遍历的含义</li>
+      <li class="done">掌握三种遍历算法</li>
+      <li class="current"><strong>理解递归调用栈</strong>(难点)</li>
+    </ul>
+    <h5>为什么要讲这个?</h5>
+    <p style="font-size:12px;color:var(--text-3);line-height:1.7">
+      遍历算法写起来只有 4 行,但<strong style="color:var(--accent-2)">递归是怎么"自动"完成的</strong>是多数同学的认知障碍。
+    </p>
+  </aside>
+  <div class="main">
+    <p class="kicker">难点突破 · 以先根序为例</p>
+    <h2 class="h2 mt-s">递归的"魔法":<span style="color:var(--accent-2)">调用栈</span>如何工作</h2>
+
+    <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px">
+      <!-- 左:示例树(简化版) -->
+      <div>
+        <h4 style="color:var(--accent-2);margin:0 0 8px;font-size:14px">🌲 示例树 + 当前访问位置</h4>
+        <div class="tree-viz" id="stack-tree-viz" style="min-height:300px">
+          <svg viewBox="0 0 360 320" width="100%" height="100%" style="max-height:380px">
+            <line x1="180" y1="38" x2="105" y2="130" stroke="var(--border)" stroke-width="2.5"/>
+            <line x1="180" y1="38" x2="255" y2="130" stroke="var(--border)" stroke-width="2.5"/>
+            <line x1="105" y1="130" x2="42" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+            <line x1="105" y1="130" x2="158" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+            <line x1="255" y1="130" x2="205" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+            <line x1="255" y1="130" x2="310" y2="240" stroke="var(--border)" stroke-width="2.5"/>
+            <g id="stk-n0"><circle cx="180" cy="34" r="22" fill="var(--bg)" stroke="var(--accent)" stroke-width="3"/><text x="180" y="40" text-anchor="middle" fill="var(--text-1)" font-size="17" font-weight="700">*</text></g>
+            <g id="stk-n1"><circle cx="105" cy="128" r="19" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/><text x="105" y="134" text-anchor="middle" fill="var(--text-1)" font-size="14" font-weight="600">+</text></g>
+            <g id="stk-n2"><circle cx="42" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="42" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">a</text></g>
+            <g id="stk-n3"><circle cx="158" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="158" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">b</text></g>
+            <g id="stk-n4"><circle cx="255" cy="128" r="19" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/><text x="255" y="134" text-anchor="middle" fill="var(--text-1)" font-size="14" font-weight="600">/</text></g>
+            <g id="stk-n5"><circle cx="205" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="205" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">c</text></g>
+            <g id="stk-n6"><circle cx="310" cy="238" r="16" fill="var(--bg)" stroke="var(--border-strong)" stroke-width="2"/><text x="310" y="243" text-anchor="middle" fill="var(--text-2)" font-size="13">d</text></g>
+          </svg>
+        </div>
+        <p style="font-size:12px;color:var(--text-3);margin-top:6px;text-align:center">橙色填充 = 当前正在访问</p>
+      </div>
+
+      <!-- 右:调用栈可视化 -->
+      <div>
+        <h4 style="color:var(--accent-2);margin:0 0 8px;font-size:14px">📚 调用栈状态(栈底→栈顶)</h4>
+        <div class="stack-container" id="stack-container">
+          <div class="stack-label">—— 空栈 ——</div>
+        </div>
+        <p style="font-size:12px;color:var(--text-3);margin-top:6px;text-align:center">每访问一个节点,<strong style="color:var(--accent-2)">压栈(push)</strong>;访问完子树后,<strong style="color:var(--accent-2)">弹栈(pop)</strong></p>
+        <div style="margin-top:14px;display:flex;gap:8px">
+          <button class="play-btn" style="background:var(--accent-2);border-color:var(--accent-2)" onclick="runStackDemo()">▶ 演示全过程</button>
+          <button onclick="resetStackDemo()">↺ 重置</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout mt-m">
+      <b>看懂这张图 = 看懂递归:</b>遍历 `*` 时把 `*` 压栈,递归去遍历 `+`,把 `+` 也压栈 → 处理完 `+` 的左子树后,`+` 弹栈 → 回到 `*` 继续遍历右子树……<strong style="color:var(--accent-2)">系统帮我们记着"我刚才走到哪"</strong>,这就是"调用栈"的本质作用。
+    </div>
+    <aside class="notes">讲解时强调:1) 递归是"函数自己调用自己";2) 每次调用都在栈上开一格;3) 子调用结束就弹栈,父调用继续。可以用手指比划"压栈→压栈→处理→弹栈→继续"的过程,学生更容易理解。</aside>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 13 — 三种遍历对比
      ════════════════════════════════════════════ -->
 <section class="slide" data-title="三种遍历对比">
   <aside class="sidebar">
@@ -822,7 +900,8 @@ body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,
       <li class="done">理解二叉树定义与基本形态</li>
       <li class="done">区分满二叉树与完全二叉树</li>
       <li class="done">理解遍历的含义</li>
-      <li class="done">掌握先根序遍历算法</li>
+      <li class="done">掌握三种遍历算法</li>
+      <li class="done">理解递归调用栈</li>
       <li class="done">掌握中根序遍历算法</li>
       <li class="done">掌握后根序遍历算法</li>
       <li class="current">用遍历思想解决实际问题</li>
@@ -1004,9 +1083,9 @@ body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,
           <!-- D: 老虎 -->
           <ellipse cx="80" cy="170" rx="30" ry="14" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="2"/>
           <text x="80" y="175" text-anchor="middle" fill="var(--text-1)" font-size="11" font-weight="600">🐯 老虎 (D)</text>
-          <!-- F: 马 -->
+          <!-- F: 斑马(原本是马,但与 H 重复,改用斑马) -->
           <ellipse cx="220" cy="170" rx="30" ry="14" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="2"/>
-          <text x="220" y="175" text-anchor="middle" fill="var(--text-1)" font-size="11" font-weight="600">🐎 马 (F)</text>
+          <text x="220" y="175" text-anchor="middle" fill="var(--text-1)" font-size="11" font-weight="600">🦓 斑马 (F)</text>
           <!-- G: 犀牛 -->
           <ellipse cx="280" cy="170" rx="30" ry="14" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="2"/>
           <text x="280" y="175" text-anchor="middle" fill="var(--text-1)" font-size="11" font-weight="600">🦏 犀牛 (G)</text>
@@ -1037,11 +1116,11 @@ body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,
           <h4>🎯 三种游览顺序</h4>
           <p style="font-size:13px;color:var(--text-2);line-height:1.8;margin:0">
             <span style="color:var(--accent);font-weight:700">先根序（A→B→D→E→F→C→G→H→I）：</span><br>
-            <span style="color:var(--text-3);font-size:12px">🦒出入口 → 🦁狮子 → 🐯老虎 → 🦅老鹰 → 🐎马(F) → 🐘大象 → 🦏犀牛 → 🐎马(H) → 🐧企鹅</span><br><br>
+            <span style="color:var(--text-3);font-size:12px">🦒出入口 → 🦁狮子 → 🐯老虎 → 🦅老鹰 → 🦓斑马(F) → 🐘大象 → 🦏犀牛 → 🐎马(H) → 🐧企鹅</span><br><br>
             <span style="color:var(--accent-2);font-weight:700">中根序（E→D→B→F→A→H→G→C→I）：</span><br>
-            <span style="color:var(--text-3);font-size:12px">🦅老鹰 → 🐯老虎 → 🦁狮子 → 🐎马(F) → 🦒出入口 → 🐎马(H) → 🦏犀牛 → 🐘大象 → 🐧企鹅</span><br><br>
+            <span style="color:var(--text-3);font-size:12px">🦅老鹰 → 🐯老虎 → 🦁狮子 → 🦓斑马(F) → 🦒出入口 → 🐎马(H) → 🦏犀牛 → 🐘大象 → 🐧企鹅</span><br><br>
             <span style="color:var(--accent-3);font-weight:700">后根序（E→D→F→B→H→G→I→C→A）：</span><br>
-            <span style="color:var(--text-3);font-size:12px">🦅老鹰 → 🐯老虎 → 🐎马(F) → 🦁狮子 → 🐎马(H) → 🦏犀牛 → 🐧企鹅 → 🐘大象 → 🦒出入口</span>
+            <span style="color:var(--text-3);font-size:12px">🦅老鹰 → 🐯老虎 → 🦓斑马(F) → 🦁狮子 → 🐎马(H) → 🦏犀牛 → 🐧企鹅 → 🐘大象 → 🦒出入口</span>
           </p>
         </div>
       </div>
@@ -1255,7 +1334,7 @@ body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,
   <div class="callout" style="margin-top:16px;max-width:760px;align-self:center">
     <b>记住一句话：</b>二叉树的三种遍历，只有<strong>根节点的访问时机不同</strong>。左永远在右之前——把握住这一点，三种遍历就永远不会搞混。
   </div>
-  <div class="deck-footer"><span>信息技术 选择性必修1 · §3.5 二叉树 · 授课人：张林</span><span class="slide-number" data-current="17" data-total="20"></span></div>
+  <div class="deck-footer"><span>信息技术 选择性必修1 · §3.5 二叉树 · 授课人：张林</span><span class="slide-number" data-current="17" data-total="22"></span></div>
 </section>
 
 <!-- ════════════════════════════════════════════
@@ -1319,16 +1398,17 @@ body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,
 </section>
 
 <!-- ════════════════════════════════════════════
-     SLIDE 19 — 说教材·学情·目标·重难点·教法学法
+     SLIDE 19 — 说教材 · 学情 · 教学目标
      ════════════════════════════════════════════ -->
-<section class="slide" data-title="说教材·学情·目标·重难点·教法学法">
+<section class="slide" data-title="说教材 · 学情 · 教学目标">
   <aside class="sidebar">
     <div class="brand">说课展示</div>
-    <h5>说课环节 · Part 1/2</h5>
+    <h5>说课环节 · Part 1/3</h5>
     <ul class="obj-list">
       <li class="current">说教材与学情</li>
-      <li>教学目标与重难点</li>
-      <li>教法学法</li>
+      <li>教学目标(核心素养)</li>
+      <li>重难点与教法学法</li>
+      <li>教学过程与反思</li>
     </ul>
     <h5>设计理念</h5>
     <p style="font-size:12px;color:var(--text-3);line-height:1.7">
@@ -1339,123 +1419,181 @@ body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,
     </p>
   </aside>
   <div class="main">
-    <p class="kicker">说课展示 · Part 1/2</p>
-    <h2 class="h2 mt-s">说教材 · 学情 · 目标 · 教法</h2>
+    <p class="kicker">说课展示 · Part 1/3</p>
+    <h2 class="h2 mt-s">说教材 · 学情 · 教学目标</h2>
 
     <!-- Row 1: 说教材 + 说学情 -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px">
       <div>
-        <h4 style="color:var(--accent);margin:0 0 6px;font-size:13px">📖 说教材</h4>
-        <div class="concept-box" style="padding:12px 16px">
-          <p style="font-size:13px;color:var(--text-2);line-height:1.75;margin:0">
-            <strong style="color:var(--accent)">来源：</strong>人教版《信息技术 选择性必修1》第三章第5节"二叉树及其遍历"<br>
-            <strong style="color:var(--accent)">地位：</strong>从线性结构过渡到非线性结构，<strong style="color:var(--accent-2)">承上启下</strong>，是二叉搜索树、堆、哈夫曼编码的基础。
+        <h4 style="color:var(--accent);margin:0 0 8px;font-size:15px">📖 说教材</h4>
+        <div class="concept-box" style="padding:16px 20px">
+          <p style="font-size:15px;color:var(--text-2);line-height:1.85;margin:0">
+            <strong style="color:var(--accent)">来源：</strong>人教版《信息技术 选择性必修1》<br>
+            第三章第5节"二叉树及其遍历"(P.95-103)
+          </p>
+          <p style="font-size:15px;color:var(--text-2);line-height:1.85;margin:10px 0 0">
+            <strong style="color:var(--accent)">地位：</strong>从线性结构过渡到非线性结构的<strong style="color:var(--accent-2)">承上启下</strong>节——是二叉搜索树、堆、哈夫曼编码的基础。
           </p>
         </div>
       </div>
       <div>
-        <h4 style="color:var(--accent-2);margin:0 0 6px;font-size:13px">👩‍🎓 说学情</h4>
-        <div class="concept-box" style="padding:12px 16px">
-          <p style="font-size:13px;color:var(--text-2);line-height:1.75;margin:0">
+        <h4 style="color:var(--accent-2);margin:0 0 8px;font-size:15px">👩‍🎓 说学情</h4>
+        <div class="concept-box" style="padding:16px 20px">
+          <p style="font-size:15px;color:var(--text-2);line-height:1.85;margin:0">
             <strong style="color:var(--accent-2)">对象：</strong>高二选考信息技术的学生<br>
-            <strong style="color:var(--accent-2)">基础：</strong>已学数组、链表等线性结构，掌握递归思想<br>
-            <strong style="color:var(--accent-2)">困难：</strong>遍历递归过程是主要认知障碍
+            <strong style="color:var(--accent-2)">基础：</strong>已学数组、链表等线性结构；掌握基本递归思想<br>
+            <strong style="color:var(--accent-2)">困难：</strong>遍历的<strong>递归调用过程</strong>是主要认知障碍
           </p>
         </div>
       </div>
     </div>
 
-    <!-- Row 2: 教学目标 (2x2 compact grid) -->
-    <h4 style="color:var(--accent);margin:14px 0 6px;font-size:13px">🎯 教学目标（信息技术学科核心素养）</h4>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
-      <div class="concept-box" style="padding:9px 13px;border-left:3px solid var(--accent)">
-        <p style="font-size:13px;color:var(--text-2);margin:0;line-height:1.55">
-          <strong style="color:var(--accent)">① 信息意识</strong> — 认识树形结构是描述层次关系的有效工具
+    <!-- Row 2: 教学目标 (2x2 grid, 大字号) -->
+    <h4 style="color:var(--accent);margin:24px 0 10px;font-size:15px">🎯 教学目标(信息技术学科四大核心素养)</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="concept-box" style="padding:14px 18px;border-left:4px solid var(--accent)">
+        <p style="font-size:15px;color:var(--text-2);margin:0;line-height:1.6">
+          <strong style="color:var(--accent)">① 信息意识</strong><br>
+          认识树形结构是描述<strong>层次关系</strong>的有效工具
         </p>
       </div>
-      <div class="concept-box" style="padding:9px 13px;border-left:3px solid var(--accent-2)">
-        <p style="font-size:13px;color:var(--text-2);margin:0;line-height:1.55">
-          <strong style="color:var(--accent-2)">② 计算思维</strong> — 理解递归在遍历中的应用，能建模并设计遍历方案
+      <div class="concept-box" style="padding:14px 18px;border-left:4px solid var(--accent-2)">
+        <p style="font-size:15px;color:var(--text-2);margin:0;line-height:1.6">
+          <strong style="color:var(--accent-2)">② 计算思维</strong><br>
+          理解<strong>递归</strong>在遍历中的应用,能建模并设计遍历方案
         </p>
       </div>
-      <div class="concept-box" style="padding:9px 13px;border-left:3px solid var(--accent-3)">
-        <p style="font-size:13px;color:var(--text-2);margin:0;line-height:1.55">
-          <strong style="color:var(--accent-3)">③ 数字化学习与创新</strong> — 通过HTML交互动画模拟遍历，体验数字化学习方式
+      <div class="concept-box" style="padding:14px 18px;border-left:4px solid var(--accent-3)">
+        <p style="font-size:15px;color:var(--text-2);margin:0;line-height:1.6">
+          <strong style="color:var(--accent-3)">③ 数字化学习与创新</strong><br>
+          通过 HTML 交互动画模拟遍历,体验数字化学习方式
         </p>
       </div>
-      <div class="concept-box" style="padding:9px 13px;border-left:3px solid #7c3aed">
-        <p style="font-size:13px;color:var(--text-2);margin:0;line-height:1.55">
-          <strong style="color:#7c3aed">④ 信息社会责任</strong> — 了解二叉树在编译、数据库索引等领域的应用
+      <div class="concept-box" style="padding:14px 18px;border-left:4px solid #7c3aed">
+        <p style="font-size:15px;color:var(--text-2);margin:0;line-height:1.6">
+          <strong style="color:#7c3aed">④ 信息社会责任</strong><br>
+          了解二叉树在<strong>编译、数据库索引</strong>等领域的应用
         </p>
       </div>
-    </div>
-
-    <!-- Row 3: 重难点 + 教法学法 -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
-      <div>
-        <h4 style="color:var(--accent);margin:0 0 5px;font-size:13px">🔑 重点 · ⚠️ 难点</h4>
-        <div class="concept-box" style="padding:11px 14px">
-          <p style="font-size:13px;color:var(--text-2);line-height:1.75;margin:0">
-            <strong style="color:var(--accent)">重点：</strong>二叉树概念与三种遍历算法<br>
-            <strong style="color:var(--accent-2)">难点：</strong>递归调用栈的心智模型构建<br>
-            <strong style="color:var(--accent-2)">突破：</strong>动画逐步演示递归入栈与回溯
-          </p>
-        </div>
-      </div>
-      <div>
-        <h4 style="color:var(--accent-2);margin:0 0 5px;font-size:13px">📐 教法 · 📝 学法</h4>
-        <div class="concept-box" style="padding:11px 14px">
-          <p style="font-size:13px;color:var(--text-2);line-height:1.75;margin:0">
-            <strong style="color:var(--accent)">教法：</strong>情境导入 · 直观演示 · 任务驱动 · 类比对比<br>
-            <strong style="color:var(--accent-2)">学法：</strong>观察归纳 · 动手实践 · 合作探究
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- 教材内容结构图 -->
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;margin-top:16px;text-align:center">
-      <h4 style="color:var(--accent);margin:0 0 10px;font-size:13px">📚 本节知识点层级结构</h4>
-      <svg viewBox="0 0 640 100" width="640" height="100" style="max-width:100%">
-        <rect x="200" y="0" width="240" height="30" rx="15" fill="var(--accent)"/>
-        <text x="320" y="20" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">二叉树及其遍历（§3.5）</text>
-        <line x1="270" y1="30" x2="120" y2="48" stroke="var(--border-strong)" stroke-width="1.5"/>
-        <line x1="320" y1="30" x2="320" y2="48" stroke="var(--border-strong)" stroke-width="1.5"/>
-        <line x1="370" y1="30" x2="520" y2="48" stroke="var(--border-strong)" stroke-width="1.5"/>
-        <rect x="10" y="48" width="220" height="26" rx="13" fill="var(--accent-2)" opacity="0.9"/>
-        <text x="120" y="66" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">二叉树概念与基本术语</text>
-        <rect x="240" y="48" width="160" height="26" rx="13" fill="var(--accent-3)" opacity="0.9"/>
-        <text x="320" y="66" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">二叉树性质与形态</text>
-        <rect x="410" y="48" width="220" height="26" rx="13" fill="#f59e0b" opacity="0.9"/>
-        <text x="520" y="66" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">三种遍历算法（核心）</text>
-        <line x1="520" y1="74" x2="430" y2="90" stroke="var(--border-strong)" stroke-width="1.2"/>
-        <line x1="520" y1="74" x2="520" y2="90" stroke="var(--border-strong)" stroke-width="1.2"/>
-        <line x1="520" y1="74" x2="610" y2="90" stroke="var(--border-strong)" stroke-width="1.2"/>
-        <rect x="380" y="88" width="100" height="22" rx="11" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.2"/>
-        <text x="430" y="103" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="600">先根序遍历</text>
-        <rect x="490" y="88" width="60" height="22" rx="11" fill="var(--surface)" stroke="var(--accent-2)" stroke-width="1.2"/>
-        <text x="520" y="103" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-weight="600">中根序</text>
-        <rect x="560" y="88" width="70" height="22" rx="11" fill="var(--surface)" stroke="#f59e0b" stroke-width="1.2"/>
-        <text x="595" y="103" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="600">后根序</text>
-      </svg>
-    </div>
-
-    <div class="callout mt-s" style="font-size:14px">
-      <b>核心理念：</b>由浅入深、由直观到抽象，借助可视化动画将递归过程"外显化"，体现"做中学、学中思"。
     </div>
   </div>
 </section>
 
 <!-- ════════════════════════════════════════════
-     SLIDE 20 — 教学过程·教学反思
+     SLIDE 20 — 重难点 · 教法 · 学法 · 教材结构
+     ════════════════════════════════════════════ -->
+<section class="slide" data-title="重难点 · 教法 · 学法 · 教材结构">
+  <aside class="sidebar">
+    <div class="brand">说课展示</div>
+    <h5>说课环节 · Part 2/3</h5>
+    <ul class="obj-list">
+      <li class="done">说教材与学情</li>
+      <li class="done">教学目标(核心素养)</li>
+      <li class="current">重难点与教法学法</li>
+      <li>教学过程与反思</li>
+    </ul>
+    <h5>关键设计</h5>
+    <p style="font-size:12px;color:var(--text-3);line-height:1.7">
+      重难点解决 = <br>
+      <strong style="color:var(--accent)">动画外显化</strong> + <br>
+      <strong style="color:var(--accent-2)">分层递进</strong>
+    </p>
+  </aside>
+  <div class="main">
+    <p class="kicker">说课展示 · Part 2/3</p>
+    <h2 class="h2 mt-s">重难点 · 教法学法 · 教材结构</h2>
+
+    <!-- Row 1: 重点 + 难点 + 突破 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:24px">
+      <div class="concept-box" style="padding:18px 20px;border-top:4px solid var(--accent)">
+        <h4 style="margin:0 0 8px;font-size:15px;color:var(--accent)">🔑 教学重点</h4>
+        <p style="font-size:15px;color:var(--text-2);line-height:1.65;margin:0">
+          ① 二叉树<strong>概念</strong><br>
+          ② 二叉树<strong>基本形态</strong><br>
+          ③ 三种<strong>遍历算法</strong>
+        </p>
+      </div>
+      <div class="concept-box" style="padding:18px 20px;border-top:4px solid var(--accent-2)">
+        <h4 style="margin:0 0 8px;font-size:15px;color:var(--accent-2)">⚠️ 教学难点</h4>
+        <p style="font-size:15px;color:var(--text-2);line-height:1.65;margin:0">
+          ① 递归的<strong>调用栈</strong>心智模型<br>
+          ② 遍历结果序列的<strong>手写</strong><br>
+          ③ 三种遍历的<strong>对比与选用</strong>
+        </p>
+      </div>
+      <div class="concept-box" style="padding:18px 20px;border-top:4px solid var(--accent-3)">
+        <h4 style="margin:0 0 8px;font-size:15px;color:var(--accent-3)">🎯 突破策略</h4>
+        <p style="font-size:15px;color:var(--text-2);line-height:1.65;margin:0">
+          <strong>HTML 动画</strong>逐步演示<br>
+          递归<strong>入栈 / 回溯</strong><br>
+          三色区分(蓝/橙/绿)<br>
+          三种遍历
+        </p>
+      </div>
+    </div>
+
+    <!-- Row 2: 教法 + 学法 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px">
+      <div class="concept-box" style="padding:18px 20px">
+        <h4 style="margin:0 0 10px;font-size:15px;color:var(--accent)">📐 教法 · 四招并用</h4>
+        <p style="font-size:15px;color:var(--text-2);line-height:1.85;margin:0">
+          🎭 <strong>情境导入</strong> — 京剧行当,生活化引题<br>
+          👁 <strong>直观演示</strong> — 动画展示递归过程<br>
+          🎯 <strong>任务驱动</strong> — 动物园建模问题求解<br>
+          🔍 <strong>类比对比</strong> — 三种遍历横向对比
+        </p>
+      </div>
+      <div class="concept-box" style="padding:18px 20px">
+        <h4 style="margin:0 0 10px;font-size:15px;color:var(--accent-2)">📝 学法 · 三环相扣</h4>
+        <p style="font-size:15px;color:var(--text-2);line-height:1.85;margin:0">
+          👀 <strong>观察归纳</strong> — 从示例树抽象出规律<br>
+          ✍️ <strong>动手实践</strong> — 3 节点形态枚举练习<br>
+          🤝 <strong>合作探究</strong> — 小组讨论数据结构选型
+        </p>
+      </div>
+    </div>
+
+    <!-- 教材内容结构图 -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 22px;margin-top:18px;text-align:center">
+      <h4 style="color:var(--accent);margin:0 0 12px;font-size:14px">📚 本节知识点层级结构</h4>
+      <svg viewBox="0 0 700 110" width="700" height="110" style="max-width:100%">
+        <rect x="230" y="0" width="240" height="30" rx="15" fill="var(--accent)"/>
+        <text x="350" y="20" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">二叉树及其遍历(§3.5)</text>
+        <line x1="300" y1="30" x2="130" y2="50" stroke="var(--border-strong)" stroke-width="1.5"/>
+        <line x1="350" y1="30" x2="350" y2="50" stroke="var(--border-strong)" stroke-width="1.5"/>
+        <line x1="400" y1="30" x2="570" y2="50" stroke="var(--border-strong)" stroke-width="1.5"/>
+        <rect x="20" y="50" width="220" height="26" rx="13" fill="var(--accent-2)" opacity="0.9"/>
+        <text x="130" y="68" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">二叉树概念与基本术语</text>
+        <rect x="270" y="50" width="160" height="26" rx="13" fill="var(--accent-3)" opacity="0.9"/>
+        <text x="350" y="68" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">二叉树性质与形态</text>
+        <rect x="460" y="50" width="220" height="26" rx="13" fill="#f59e0b" opacity="0.9"/>
+        <text x="570" y="68" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">三种遍历算法(核心)</text>
+        <line x1="570" y1="76" x2="475" y2="96" stroke="var(--border-strong)" stroke-width="1.2"/>
+        <line x1="570" y1="76" x2="570" y2="96" stroke="var(--border-strong)" stroke-width="1.2"/>
+        <line x1="570" y1="76" x2="665" y2="96" stroke="var(--border-strong)" stroke-width="1.2"/>
+        <rect x="425" y="94" width="100" height="22" rx="11" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.2"/>
+        <text x="475" y="109" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="600">先根序遍历</text>
+        <rect x="535" y="94" width="70" height="22" rx="11" fill="var(--surface)" stroke="var(--accent-2)" stroke-width="1.2"/>
+        <text x="570" y="109" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-weight="600">中根序</text>
+        <rect x="615" y="94" width="80" height="22" rx="11" fill="var(--surface)" stroke="#f59e0b" stroke-width="1.2"/>
+        <text x="655" y="109" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="600">后根序</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 21 — 教学过程·教学反思
      ════════════════════════════════════════════ -->
 <section class="slide" data-title="教学过程·教学反思">
   <aside class="sidebar">
     <div class="brand">说课展示</div>
-    <h5>说课环节 · Part 2/2</h5>
+    <h5>说课环节 · Part 3/3</h5>
     <ul class="obj-list">
-      <li class="current">说教学过程</li>
-      <li>教学反思与评价</li>
+      <li class="done">说教材与学情</li>
+      <li class="done">教学目标(核心素养)</li>
+      <li class="done">重难点与教法学法</li>
+      <li class="current">教学过程与反思</li>
     </ul>
     <h5>教学追求</h5>
     <p style="font-size:12px;color:var(--text-3);line-height:1.7">
@@ -1465,7 +1603,7 @@ body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,
     </p>
   </aside>
   <div class="main">
-    <p class="kicker">说课展示 · Part 2/2</p>
+    <p class="kicker">说课展示 · Part 3/3</p>
     <h2 class="h2 mt-s">教学过程 · 教学反思</h2>
 
     <!-- 教学过程 -->
@@ -1567,3 +1705,375 @@ body.speaker-active #speaker-toggle-hint {color:var(--accent);background:rgba(0,
     </div>
   </div>
 </section>
+
+<!-- ════════════════════════════════════════════
+     KEYHINT AUTO-FADE + 补全的交互脚本
+     ════════════════════════════════════════════ -->
+<script src="assets/runtime.js"></script>
+<script>
+/* ─── 键盘提示淡出(8 秒后自动隐藏,任何按键再显示) ─── */
+(function(){
+  const kh = document.getElementById('keyhint');
+  if (!kh) return;
+  let fadeTimer = setTimeout(() => kh.classList.add('faded'), 8000);
+  function showHint() {
+    kh.classList.remove('faded');
+    kh.classList.add('show');
+    clearTimeout(fadeTimer);
+    fadeTimer = setTimeout(() => { kh.classList.remove('show'); kh.classList.add('faded'); }, 6000);
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === '?' || e.key === '/') {
+      e.preventDefault();
+      showHint();
+    } else if (kh.classList.contains('faded')) {
+      showHint();
+    }
+  }, true);
+  document.addEventListener('mousemove', () => {
+    if (kh.classList.contains('faded')) showHint();
+  });
+})();
+
+/* ─── 三种遍历算法动画 ───
+ * 树节点结构(slide 9-11):
+ *   pre-n0..n6, in-n0..n6, post-n0..n6
+ *   pre-s1..s4, in-s1..s4, post-s1..s4(算法步骤)
+ *   pre-seq, in-seq, post-seq 内有 <span class="ch" data-idx="0..6">
+ * 节点访问顺序:
+ *   先根序 (pre) : n0 → n1 → n2 → n3 → n4 → n5 → n6
+ *   中根序 (in)  : n2 → n1 → n3 → n0 → n5 → n4 → n6
+ *   后根序 (post): n2 → n3 → n1 → n5 → n6 → n4 → n0
+ */
+const TRAV_STEPS = {
+  pre:  { nodes: [0,1,2,3,4,5,6], steps: [2, 3, 2, 3, 2, 3, 2] },
+  in:   { nodes: [2,1,3,0,5,4,6], steps: [1, 3, 1, 3, 1, 3, 1] },
+  post: { nodes: [2,3,1,5,6,4,0], steps: [1, 1, 4, 1, 1, 4, 4] },
+};
+const travState = { pre: {i:0, timer:null}, in: {i:0, timer:null}, post: {i:0, timer:null} };
+
+function highlightTrav(prefix, idx) {
+  // prefix: 'pre' | 'in' | 'post'
+  const seq = document.getElementById(prefix + '-seq');
+  if (seq) {
+    Array.from(seq.querySelectorAll('.ch')).forEach((ch, k) => {
+      ch.classList.remove('cur');
+      ch.classList.toggle('done', k < idx);
+    });
+    const cur = seq.querySelector('.ch[data-idx="' + idx + '"]');
+    if (cur) cur.classList.add('cur');
+  }
+  // Tree node highlight
+  for (let k = 0; k < 7; k++) {
+    const node = document.getElementById(prefix + '-n' + k);
+    if (node) {
+      const circle = node.querySelector('circle');
+      if (circle) {
+        if (k < idx) { circle.setAttribute('fill', 'var(--surface-2)'); }
+        else if (k === idx) { circle.setAttribute('fill', 'var(--accent-2)'); circle.setAttribute('opacity', '0.35'); }
+        else { circle.setAttribute('fill', 'var(--bg)'); circle.setAttribute('opacity', '1'); }
+      }
+    }
+  }
+  // Algorithm step highlight
+  const st = (TRAV_STEPS[prefix].steps[idx] || 2);
+  for (let s = 1; s <= 4; s++) {
+    const el = document.getElementById(prefix + '-s' + s);
+    if (el) el.classList.toggle('hl', s === st);
+  }
+}
+
+function resetTrav(prefix) {
+  if (travState[prefix].timer) { clearInterval(travState[prefix].timer); travState[prefix].timer = null; }
+  travState[prefix].i = 0;
+  for (let k = 0; k < 7; k++) {
+    const node = document.getElementById(prefix + '-n' + k);
+    if (node) {
+      const circle = node.querySelector('circle');
+      if (circle) { circle.setAttribute('fill', 'var(--bg)'); circle.setAttribute('opacity', '1'); }
+    }
+  }
+  const seq = document.getElementById(prefix + '-seq');
+  if (seq) Array.from(seq.querySelectorAll('.ch')).forEach(ch => ch.classList.remove('done','cur'));
+  for (let s = 1; s <= 4; s++) {
+    const el = document.getElementById(prefix + '-s' + s);
+    if (el) el.classList.remove('hl');
+  }
+}
+
+function runTrav(prefix) {
+  resetTrav(prefix);
+  travState[prefix].timer = setInterval(() => {
+    travState[prefix].i++;
+    if (travState[prefix].i >= 7) {
+      clearInterval(travState[prefix].timer);
+      travState[prefix].timer = null;
+      highlightTrav(prefix, 6);
+      return;
+    }
+    highlightTrav(prefix, travState[prefix].i);
+  }, 900);
+}
+
+function stepTrav(prefix) {
+  if (travState[prefix].timer) { clearInterval(travState[prefix].timer); travState[prefix].timer = null; }
+  if (travState[prefix].i < 6) travState[prefix].i++;
+  highlightTrav(prefix, travState[prefix].i);
+}
+
+/* ─── 动物园遍历(slide 14) ───
+ * 节点顺序与示例树一致,按 SVG 文本匹配高亮对应 ellipse
+ */
+const ZOO_STEPS = {
+  pre:  ['A','B','D','E','F','C','G','H','I'],
+  in:   ['E','D','B','F','A','H','G','C','I'],
+  post: ['E','D','F','B','H','G','I','C','A'],
+};
+let zooState = { i: 0, timer: null };
+
+function highlightZoo(idx, labels) {
+  const svg = document.getElementById('zoo-svg');
+  if (!svg) return;
+  const allEllipses = svg.querySelectorAll('ellipse');
+  allEllipses.forEach(el => {
+    el.setAttribute('stroke-width', '2');
+    el.setAttribute('opacity', '0.15');
+  });
+  // 高亮所有访问过的
+  for (let k = 0; k <= idx && k < labels.length; k++) {
+    const label = labels[k];
+    allEllipses.forEach(el => {
+      const t = el.parentNode.querySelector('text');
+      if (t && t.textContent.includes('(' + label + ')')) {
+        el.setAttribute('stroke-width', '3');
+        el.setAttribute('opacity', '0.5');
+      }
+    });
+  }
+  // 当前访问(脉冲)
+  const cur = labels[idx];
+  allEllipses.forEach(el => {
+    const t = el.parentNode.querySelector('text');
+    if (t && t.textContent.includes('(' + cur + ')')) {
+      el.setAttribute('stroke-width', '4');
+      el.setAttribute('opacity', '0.85');
+    }
+  });
+}
+
+function runZooTrav(order) {
+  resetZooTrav();
+  const labels = ZOO_STEPS[order];
+  zooState.i = 0;
+  highlightZoo(0, labels);
+  zooState.timer = setInterval(() => {
+    zooState.i++;
+    if (zooState.i >= labels.length) {
+      clearInterval(zooState.timer);
+      zooState.timer = null;
+      return;
+    }
+    highlightZoo(zooState.i, labels);
+  }, 700);
+}
+
+function resetZooTrav() {
+  if (zooState.timer) { clearInterval(zooState.timer); zooState.timer = null; }
+  zooState.i = 0;
+  const svg = document.getElementById('zoo-svg');
+  if (svg) {
+    svg.querySelectorAll('ellipse').forEach(el => {
+      el.setAttribute('stroke-width', '2');
+      el.setAttribute('opacity', '0.15');
+    });
+  }
+}
+
+/* ─── 答案展开(slide 16) ─── */
+function toggleAns(btn) {
+  const ex = btn.nextElementSibling;
+  if (!ex) return;
+  const show = ex.classList.toggle('show');
+  btn.classList.toggle('revealed', show);
+  btn.textContent = show ? '✕ 收起答案' : '🔍 查看答案';
+}
+
+/* ─── 小组讨论计时器(slide 15) ─── */
+let discTimer = null;
+function fmtTime(s) {
+  const m = Math.floor(s / 60), ss = s % 60;
+  return m + ':' + String(ss).padStart(2, '0');
+}
+function startDiscTimer() {
+  const disp = document.getElementById('disc-timer-display');
+  const btn  = document.getElementById('disc-timer-btn');
+  const hint = document.getElementById('disc-timeup');
+  if (!disp) return;
+  if (discTimer) {
+    // 已在跑 → 暂停
+    clearInterval(discTimer); discTimer = null;
+    btn.textContent = '▶ 继续计时';
+    disp.classList.remove('warning');
+    return;
+  }
+  hint.style.display = 'none';
+  btn.textContent = '⏸ 暂停';
+  let remaining = 180;
+  discTimer = setInterval(() => {
+    remaining--;
+    disp.textContent = fmtTime(remaining);
+    if (remaining <= 30) disp.classList.add('warning');
+    if (remaining <= 0) {
+      clearInterval(discTimer); discTimer = null;
+      btn.textContent = '▶ 重新开始';
+      hint.style.display = 'block';
+      disp.classList.remove('warning');
+    }
+  }, 1000);
+}
+function resetDiscTimer() {
+  if (discTimer) { clearInterval(discTimer); discTimer = null; }
+  const disp = document.getElementById('disc-timer-display');
+  const btn  = document.getElementById('disc-timer-btn');
+  const hint = document.getElementById('disc-timeup');
+  if (disp) { disp.textContent = '3:00'; disp.classList.remove('warning'); }
+  if (btn)  btn.textContent = '▶ 开始计时';
+  if (hint) hint.style.display = 'none';
+}
+
+/* ─── 递归调用栈演示(slide 12) ───
+ * 先根序遍历 *+ab/cd 的调用栈过程:
+ *   push *     → 访问 * (输出)
+ *   push +     → 访问 +(进入左子树)
+ *   push a     → 访问 a (叶,输出,弹栈)
+ *   ← 返回 +
+ *   push b     → 访问 b (叶,输出,弹栈)
+ *   ← 返回 + , 弹栈
+ *   ← 返回 *
+ *   push /     → 访问 / (进入左子树)
+ *   push c     → 访问 c (叶,输出,弹栈)
+ *   ← 返回 /
+ *   push d     → 访问 d (叶,输出,弹栈)
+ *   ← 返回 / , 弹栈
+ *   ← 返回 * , 弹栈
+ *   输出序列: * + a b / c d
+ */
+const STACK_TRACE = [
+  { op: 'push',  node: 0, label: '*', note: '调用 preorder(*)' },
+  { op: 'visit', node: 0, label: '*', note: '访问 *  → 输出 *' },
+  { op: 'push',  node: 1, label: '+', note: '递归 preorder(+)' },
+  { op: 'visit', node: 1, label: '+', note: '访问 +  → 输出 +' },
+  { op: 'push',  node: 2, label: 'a', note: '递归 preorder(a)' },
+  { op: 'visit', node: 2, label: 'a', note: '访问 a  → 输出 a' },
+  { op: 'pop',   node: 2, label: 'a', note: 'a 是叶子 → 弹栈' },
+  { op: 'push',  node: 3, label: 'b', note: '递归 preorder(b)' },
+  { op: 'visit', node: 3, label: 'b', note: '访问 b  → 输出 b' },
+  { op: 'pop',   node: 3, label: 'b', note: 'b 是叶子 → 弹栈' },
+  { op: 'pop',   node: 1, label: '+', note: '+ 的左右子树完成 → 弹栈' },
+  { op: 'push',  node: 4, label: '/', note: '递归 preorder(/)' },
+  { op: 'visit', node: 4, label: '/', note: '访问 /  → 输出 /' },
+  { op: 'push',  node: 5, label: 'c', note: '递归 preorder(c)' },
+  { op: 'visit', node: 5, label: 'c', note: '访问 c  → 输出 c' },
+  { op: 'pop',   node: 5, label: 'c', note: 'c 是叶子 → 弹栈' },
+  { op: 'push',  node: 6, label: 'd', note: '递归 preorder(d)' },
+  { op: 'visit', node: 6, label: 'd', note: '访问 d  → 输出 d' },
+  { op: 'pop',   node: 6, label: 'd', note: 'd 是叶子 → 弹栈' },
+  { op: 'pop',   node: 4, label: '/', note: '/ 的左右子树完成 → 弹栈' },
+  { op: 'pop',   node: 0, label: '*', note: '* 的左右子树完成 → 弹栈,遍历结束' },
+];
+
+let stackTimer = null;
+let stackState = { stepIdx: 0, stack: [], output: [] };
+
+function renderStack() {
+  const container = document.getElementById('stack-container');
+  if (!container) return;
+  if (stackState.stack.length === 0) {
+    container.innerHTML = '<div class="stack-label" style="margin-top:0">—— 空栈 ——</div>';
+  } else {
+    // 栈底在下,栈顶在上
+    let html = '';
+    // 反向遍历(栈顶在上)
+    for (let i = stackState.stack.length - 1; i >= 0; i--) {
+      const item = stackState.stack[i];
+      const isTop = i === stackState.stack.length - 1;
+      html += '<div class="stack-frame' + (isTop ? ' highlight' : '') + '">'
+            + '  preorder(' + item + ')'
+            + '</div>';
+    }
+    container.innerHTML = html;
+  }
+  // 输出序列
+  let outEl = document.getElementById('stack-output');
+  if (!outEl) {
+    outEl = document.createElement('div');
+    outEl.id = 'stack-output';
+    outEl.style.cssText = 'margin-top:14px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);font-family:var(--font-mono);font-size:18px;letter-spacing:.08em;min-height:36px;color:var(--text-1)';
+    container.parentNode.appendChild(outEl);
+  }
+  outEl.textContent = '输出:' + (stackState.output.length ? ' ' + stackState.output.join(' ') : ' (尚无)');
+}
+
+function highlightStackNode(nodeIdx) {
+  for (let k = 0; k < 7; k++) {
+    const g = document.getElementById('stk-n' + k);
+    if (!g) continue;
+    const circle = g.querySelector('circle');
+    if (circle) {
+      if (k < nodeIdx) {
+        circle.setAttribute('fill', 'var(--surface-2)');
+        circle.setAttribute('opacity', '0.5');
+      } else if (k === nodeIdx) {
+        circle.setAttribute('fill', 'var(--accent-2)');
+        circle.setAttribute('opacity', '0.4');
+      } else {
+        circle.setAttribute('fill', 'var(--bg)');
+        circle.setAttribute('opacity', '1');
+      }
+    }
+  }
+}
+
+function runStackDemo() {
+  resetStackDemo();
+  stackTimer = setInterval(() => {
+    if (stackState.stepIdx >= STACK_TRACE.length) {
+      clearInterval(stackTimer);
+      stackTimer = null;
+      return;
+    }
+    const step = STACK_TRACE[stackState.stepIdx];
+    if (step.op === 'push') {
+      stackState.stack.push(step.label);
+    } else if (step.op === 'pop') {
+      stackState.stack.pop();
+    } else if (step.op === 'visit') {
+      stackState.output.push(step.label);
+    }
+    highlightStackNode(step.node);
+    renderStack();
+    // 显示当前步骤说明(用 callout 或浮动文字,简单做法:title)
+    const container = document.getElementById('stack-container');
+    if (container) container.title = step.note;
+    stackState.stepIdx++;
+  }, 800);
+}
+
+function resetStackDemo() {
+  if (stackTimer) { clearInterval(stackTimer); stackTimer = null; }
+  stackState = { stepIdx: 0, stack: [], output: [] };
+  for (let k = 0; k < 7; k++) {
+    const g = document.getElementById('stk-n' + k);
+    if (!g) continue;
+    const circle = g.querySelector('circle');
+    if (circle) {
+      circle.setAttribute('fill', 'var(--bg)');
+      circle.setAttribute('opacity', '1');
+    }
+  }
+  renderStack();
+}
+</script>
+</body>
+</html>

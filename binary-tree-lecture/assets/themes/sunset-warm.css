@@ -1,0 +1,74 @@
+/* theme: sunset-warm — 落日暖橙（与 memphis-pop 同变量体系） */
+.tpl-course-module {
+  --bg: #fff7ed;
+  --bg-soft: #ffedd5;
+  --surface: #ffffff;
+  --surface-2: #fff1de;
+  --border: rgba(194, 65, 12, 0.18);
+  --border-strong: rgba(194, 65, 12, 0.32);
+  --text-1: #431407;
+  --text-2: #7c2d12;
+  --text-3: #a16207;
+  --accent: #ea580c;
+  --accent-2: #dc2626;
+  --accent-3: #b45309;
+  --grad: linear-gradient(135deg, #f59e0b, #ea580c 50%, #dc2626);
+  --radius: 14px;
+  --radius-lg: 20px;
+  --shadow: 0 12px 30px rgba(234, 88, 12, 0.10);
+}
+
+/* ===== 背景：暖色径向渐变（落日感） ===== */
+.tpl-course-module .slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.7;
+  background:
+    /* 顶部金黄日轮 */
+    radial-gradient(circle at 50% -5%, #fbbf24 0%, #fbbf24 220px, transparent 220px),
+    /* 底部赭红 */
+    radial-gradient(ellipse at 50% 105%, #dc2626 0%, transparent 55%),
+    /* 左下橙光晕 */
+    radial-gradient(circle at 8% 92%, rgba(249, 115, 22, 0.25) 0%, transparent 40%),
+    /* 右上暗紫调 */
+    radial-gradient(circle at 95% 12%, rgba(180, 83, 9, 0.20) 0%, transparent 35%);
+}
+
+/* ===== 装饰条带：水平横纹（黄昏地平线） ===== */
+.tpl-course-module .slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background:
+    /* 顶部光晕 */
+    linear-gradient(180deg, rgba(251, 191, 36, 0.20) 0%, transparent 18%),
+    /* 中部暖横线（地平线） */
+    linear-gradient(180deg, transparent 49.5%, rgba(194, 65, 12, 0.10) 49.5%, rgba(194, 65, 12, 0.10) 50%, transparent 50%, transparent 50.5%, rgba(234, 88, 12, 0.08) 50.5%, rgba(234, 88, 12, 0.08) 51%, transparent 51%);
+}
+
+.tpl-course-module .slide > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== Sidebar 落日渐变装饰条 ===== */
+.tpl-course-module .sidebar::after {
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 30%, #ea580c 65%, #dc2626 100%) !important;
+  opacity: 0.7 !important;
+}
+
+/* ===== 概念卡片：橙色顶部边 ===== */
+.tpl-course-module .concept-box {
+  border-top: 3px solid #f59e0b;
+}
+
+.tpl-course-module .concept-box::before {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b, #ea580c, #dc2626) !important;
+  opacity: 0.7 !important;
+}

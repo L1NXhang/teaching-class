@@ -3,3 +3,8 @@ beautiful-html-templates/
 node_modules/
 .DS_Store
 *.log
+
+# 工具状态/缓存
+.omc/
+__pycache__/
+*.pyc
